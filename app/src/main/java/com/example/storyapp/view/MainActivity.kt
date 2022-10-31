@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.storyapp.R
 import com.example.storyapp.view.addstory.AddStoryFragment
-import com.example.storyapp.view.detailstory.DetailStoryFragment
 import com.example.storyapp.view.storylist.StoryListFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -27,8 +26,7 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 R.id.profile_menu -> {
-                    loadFragment(DetailStoryFragment())
-                    return@setOnItemSelectedListener true
+                    return@setOnItemSelectedListener false
                 }
                 else -> return@setOnItemSelectedListener false
             }
