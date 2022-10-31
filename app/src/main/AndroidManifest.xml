@@ -13,22 +13,6 @@
         android:theme="@style/Theme.StoryApp"
         tools:targetApi="31">
         <activity
-            android:name=".view.addstory.AddStoryActivity"
-            android:exported="false"
-            android:parentActivityName=".view.story.MainActivity">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".view.detailstory.DetailStoryActivity"
-            android:exported="false"
-            android:parentActivityName=".view.story.MainActivity">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".auth.RegisterActivity"
             android:exported="false"
             android:parentActivityName=".auth.LoginActivity">
@@ -50,7 +34,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.story.MainActivity"
+            android:name=".view.MainActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
