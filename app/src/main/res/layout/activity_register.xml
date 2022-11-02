@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="16dp"
-    tools:context=".auth.RegisterActivity">
+    tools:context=".view.auth.RegisterActivity">
 
     <TextView
         android:id="@+id/tv_login"
