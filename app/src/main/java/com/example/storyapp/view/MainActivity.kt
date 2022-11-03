@@ -1,6 +1,7 @@
 package com.example.storyapp.view
 
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.storyapp.R
@@ -41,5 +42,15 @@ class MainActivity : AppCompatActivity() {
         transaction.replace(R.id.fragment_container, fragment)
         transaction.commit()
 
+    }
+
+    override fun onBackPressed() {
+        AlertDialog.Builder(this)
+            .setMessage("Exit app?")
+            .setNegativeButton("No") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+            }
+            .setPositiveButton("Yes") { _, _ -> super.onBackPressed() }
+            .create().show()
     }
 }
