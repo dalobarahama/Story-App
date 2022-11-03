@@ -1,5 +1,6 @@
 package com.example.storyapp.network
 
+import com.example.storyapp.model.DetailStoryResponse
 import com.example.storyapp.model.LoginResponse
 import com.example.storyapp.model.StoryResponse
 import retrofit2.Call
@@ -38,6 +39,24 @@ class RestApiService {
                 }
 
                 override fun onFailure(call: Call<StoryResponse>, t: Throwable) {
+                    onResult(null)
+                }
+
+            }
+        )
+    }
+
+    fun getDetailStory(token: String, idStory: String, onResult: (DetailStoryResponse?) -> Unit) {
+        retrofit.getDetailStory(token, idStory).enqueue(
+            object : Callback<DetailStoryResponse> {
+                override fun onResponse(
+                    call: Call<DetailStoryResponse>,
+                    response: Response<DetailStoryResponse>
+                ) {
+                    onResult(response.body())
+                }
+
+                override fun onFailure(call: Call<DetailStoryResponse>, t: Throwable) {
                     onResult(null)
                 }
 

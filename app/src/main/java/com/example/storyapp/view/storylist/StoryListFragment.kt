@@ -1,6 +1,7 @@
 package com.example.storyapp.view.storylist
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import com.example.storyapp.R
 import com.example.storyapp.model.StoryModel
 import com.example.storyapp.network.RestApiService
 import com.example.storyapp.view.adapter.StoryListAdapter
+import com.example.storyapp.view.detailstory.DetailStoryActivity
 
 class StoryListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
@@ -57,9 +59,10 @@ class StoryListFragment : Fragment() {
 
         storyListAdapter.setOnItemCallback(object : StoryListAdapter.OnItemClickCallback {
             override fun onItemClicked(story: StoryModel) {
-                Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(context, DetailStoryActivity::class.java)
+                intent.putExtra(DetailStoryActivity.STORY_ID, story.id)
+                startActivity(intent)
             }
-
         })
     }
 }
