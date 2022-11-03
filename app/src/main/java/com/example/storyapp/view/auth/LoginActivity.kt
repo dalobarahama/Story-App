@@ -1,5 +1,6 @@
 package com.example.storyapp.view.auth
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -7,7 +8,6 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.storyapp.R
-import com.example.storyapp.model.LoginResult
 import com.example.storyapp.network.RestApiService
 import com.example.storyapp.view.MainActivity
 
@@ -45,16 +45,23 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun login(email: String, password: String) {
+    private fun login(email: String, password: String) {
         val apiService = RestApiService()
         apiService.login(email, password) {
             if (it?.message == "success") {
                 progressBar.visibility = View.GONE
                 goToHome()
 
-                val loginResult: LoginResult = it.loginResult
-                Log.d("Login", "username: ${loginResult.name}")
+                val token = "Bearer ${it.loginResult.token}"
+                val sharedPref = getSharedPreferences("prefs", Context.MODE_PRIVATE)
+                with(sharedPref.edit()) {
+                    putString("token", token)
+                    apply()
+                }
+
+                Log.d("Login", "token: $token")
             } else {
+                progressBar.visibility = View.GONE
                 Toast.makeText(this, "Email atau password salah", Toast.LENGTH_SHORT).show()
             }
         }

@@ -1,10 +1,9 @@
 package com.example.storyapp.network
 
-import com.example.storyapp.model.UserResponse
+import com.example.storyapp.model.LoginResponse
+import com.example.storyapp.model.StoryResponse
 import retrofit2.Call
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface ApiService {
 
@@ -13,5 +12,8 @@ interface ApiService {
     fun login(
         @Field("email") email: String,
         @Field("password") password: String
-    ): Call<UserResponse>
+    ): Call<LoginResponse>
+
+    @GET("stories")
+    fun getStories(@Header("Authorization") token: String): Call<StoryResponse>
 }

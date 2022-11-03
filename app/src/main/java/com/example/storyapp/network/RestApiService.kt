@@ -1,23 +1,43 @@
 package com.example.storyapp.network
 
-import com.example.storyapp.model.UserResponse
+import com.example.storyapp.model.LoginResponse
+import com.example.storyapp.model.StoryResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class RestApiService {
-    fun login(email: String, password: String, onResult: (UserResponse?) -> Unit) {
-        val retrofit = ApiClient.getApiService()
+    private val retrofit = ApiClient.getApiService()
+
+    fun login(email: String, password: String, onResult: (LoginResponse?) -> Unit) {
         retrofit.login(email, password).enqueue(
-            object : Callback<UserResponse> {
+            object : Callback<LoginResponse> {
                 override fun onResponse(
-                    call: Call<UserResponse>,
-                    response: Response<UserResponse>
+                    call: Call<LoginResponse>,
+                    response: Response<LoginResponse>
                 ) {
                     onResult(response.body())
                 }
 
-                override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                    onResult(null)
+                }
+
+            }
+        )
+    }
+
+    fun getStories(token: String, onResult: (StoryResponse?) -> Unit) {
+        retrofit.getStories(token).enqueue(
+            object : Callback<StoryResponse> {
+                override fun onResponse(
+                    call: Call<StoryResponse>,
+                    response: Response<StoryResponse>
+                ) {
+                    onResult(response.body())
+                }
+
+                override fun onFailure(call: Call<StoryResponse>, t: Throwable) {
                     onResult(null)
                 }
 
