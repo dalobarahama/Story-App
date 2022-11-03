@@ -2,6 +2,7 @@ package com.example.storyapp.network
 
 import com.example.storyapp.model.DetailStoryResponse
 import com.example.storyapp.model.LoginResponse
+import com.example.storyapp.model.RegisterResponse
 import com.example.storyapp.model.StoryResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -9,6 +10,29 @@ import retrofit2.Response
 
 class RestApiService {
     private val retrofit = ApiClient.getApiService()
+
+    fun register(
+        name: String,
+        email: String,
+        password: String,
+        onResult: (RegisterResponse?) -> Unit
+    ) {
+        retrofit.register(name, email, password).enqueue(
+            object : Callback<RegisterResponse> {
+                override fun onResponse(
+                    call: Call<RegisterResponse>,
+                    response: Response<RegisterResponse>
+                ) {
+                    onResult(response.body())
+                }
+
+                override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
+                    onResult(null)
+                }
+
+            }
+        )
+    }
 
     fun login(email: String, password: String, onResult: (LoginResponse?) -> Unit) {
         retrofit.login(email, password).enqueue(
