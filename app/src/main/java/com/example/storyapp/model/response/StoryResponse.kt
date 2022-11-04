@@ -1,4 +1,6 @@
-package com.example.storyapp.model
+package com.example.storyapp.model.response
+
+import com.example.storyapp.model.StoryModel
 
 data class StoryResponse(
     val error: Boolean,

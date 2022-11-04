@@ -1,9 +1,9 @@
 package com.example.storyapp.network
 
-import com.example.storyapp.model.DetailStoryResponse
-import com.example.storyapp.model.LoginResponse
-import com.example.storyapp.model.RegisterResponse
-import com.example.storyapp.model.StoryResponse
+import com.example.storyapp.model.response.DetailStoryResponse
+import com.example.storyapp.model.response.LoginResponse
+import com.example.storyapp.model.response.RegisterResponse
+import com.example.storyapp.model.response.StoryResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
