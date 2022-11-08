@@ -1,9 +1,12 @@
 package com.example.storyapp.network
 
+import android.util.Log
+import com.example.storyapp.model.response.CommonResponse
 import com.example.storyapp.model.response.DetailStoryResponse
 import com.example.storyapp.model.response.LoginResponse
-import com.example.storyapp.model.response.RegisterResponse
 import com.example.storyapp.model.response.StoryResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,18 +18,18 @@ class RestApiService {
         name: String,
         email: String,
         password: String,
-        onResult: (RegisterResponse?) -> Unit
+        onResult: (CommonResponse?) -> Unit
     ) {
         retrofit.register(name, email, password).enqueue(
-            object : Callback<RegisterResponse> {
+            object : Callback<CommonResponse> {
                 override fun onResponse(
-                    call: Call<RegisterResponse>,
-                    response: Response<RegisterResponse>
+                    call: Call<CommonResponse>,
+                    response: Response<CommonResponse>
                 ) {
                     onResult(response.body())
                 }
 
-                override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
+                override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
                     onResult(null)
                 }
 
@@ -50,6 +53,34 @@ class RestApiService {
 
             }
         )
+    }
+
+    fun uploadStory(
+        token: String,
+        description: RequestBody,
+        image: MultipartBody.Part,
+        lat: RequestBody?,
+        lon: RequestBody?,
+        onResult: (CommonResponse?) -> Unit
+    ) {
+        retrofit.uploadStory(token, description, image, lat, lon)
+            .enqueue(object : Callback<CommonResponse> {
+                override fun onResponse(
+                    call: Call<CommonResponse>,
+                    response: Response<CommonResponse>
+                ) {
+                    Log.d("RestApiService", "onResponse: called")
+                    Log.d("RestApiService", "onResponse: $response")
+                    Log.d("RestApiService", "onResponse: ${response.body()}")
+                    onResult(response.body())
+                }
+
+                override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
+                    onResult(null)
+                    Log.d("RestApiService", "onFailure: ${t.message}")
+                }
+
+            })
     }
 
     fun getStories(token: String, onResult: (StoryResponse?) -> Unit) {
