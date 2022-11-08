@@ -2,6 +2,7 @@ package com.example.storyapp.view.addstory
 
 import android.app.Activity
 import android.content.ContentResolver
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -17,8 +18,6 @@ import androidx.activity.result.contract.ActivityResultContracts.StartActivityFo
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.storyapp.R
-import com.example.storyapp.model.response.CommonResponse
-import com.example.storyapp.network.ApiClient
 import com.example.storyapp.network.RestApiService
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -26,9 +25,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -38,6 +34,7 @@ class AddStoryFragment : Fragment() {
     private lateinit var imageView: ImageView
     private lateinit var imageUri: Uri
     private lateinit var progressBar: ProgressBar
+    private lateinit var uri: Uri
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,20 +84,9 @@ class AddStoryFragment : Fragment() {
             val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
             val descRequestBody = description.text.toString()
                 .toRequestBody("text/plain".toMediaType())
-//            val requestFile = RequestBody.create(
-//                MediaType.parse("multipart/form-data"),
-//                file
-//            )
-//            RequestBody.create(
-//                context?.contentResolver?.getType(imageUri)
-//                    ?.let { it1 -> MediaType.parse(it1) }, file
-//            )
+
             val imageRequestBody =
                 MultipartBody.Part.createFormData("photo", file.name, requestFile)
-//            val descRequestBody = RequestBody.create(
-//                MediaType.parse("text/plain"),
-//                description.text.toString()
-//            )
 
             uploadStory(token, descRequestBody, imageRequestBody, null, null)
 
@@ -111,6 +97,12 @@ class AddStoryFragment : Fragment() {
 
     private fun openCamera() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { intent ->
+            val values = ContentValues()
+            values.put(MediaStore.Images.Media.TITLE, "images")
+
+            uri = context?.contentResolver
+                ?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)!!
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
             cameraResultLauncher.launch(intent)
         }
     }
@@ -125,12 +117,13 @@ class AddStoryFragment : Fragment() {
     private var cameraResultLauncher =
         registerForActivityResult(StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val data: Intent? = result.data
+                val intent: Intent? = result.data
                 context?.let {
                     Glide.with(it)
-                        .load(data?.extras?.get("data"))
+                        .load(uri)
                         .into(imageView)
                 }
+                imageUri = uri
             }
         }
 
@@ -144,10 +137,6 @@ class AddStoryFragment : Fragment() {
                         .into(imageView)
                 }
                 imageUri = intent?.data!!
-//                val uri = Uri.parse(imageUri.toString())
-//                val file = File(intent.data.toString())
-//                Log.d("AddStoryFragment", "uri: $uri")
-//                Log.d("AddStoryFragment", "file: $file")
             }
         }
 
@@ -159,28 +148,12 @@ class AddStoryFragment : Fragment() {
         lon: RequestBody?
     ) {
         val apiService = RestApiService()
-        ApiClient.getApiService().uploadStory(
-            token, description, imageUri, lat, lon
-        ).enqueue(object : Callback<CommonResponse> {
-            override fun onResponse(
-                call: Call<CommonResponse>,
-                response: Response<CommonResponse>
-            ) {
-                Toast.makeText(context, "response called", Toast.LENGTH_SHORT).show()
-                Log.i(
-                    "AddStoryFragment",
-                    "onResponse message: ${response.message()}\n ${response.code()}\n ${response.errorBody()}"
-                )
-                Log.i("AddStoryFragment", "onResponse: ${response.body()?.error}")
-                Log.i("AddStoryFragment", "onResponse: ${response.body()?.message}")
+        apiService.uploadStory(token, description, imageUri, lat, lon) {
+            if (it?.error == false) {
+                progressBar.visibility = View.GONE
+                Toast.makeText(context, "Story Uploaded", Toast.LENGTH_SHORT).show()
             }
-
-            override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
-                Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show()
-                Log.d("AddStoryFragment", "onResponse: ${t.message}")
-            }
-
-        })
+        }
     }
 }
 
