@@ -56,6 +56,7 @@ class LoginActivity : AppCompatActivity() {
                 val sharedPref = getSharedPreferences("prefs", Context.MODE_PRIVATE)
                 with(sharedPref.edit()) {
                     putString("token", token)
+                    putString("username", it.loginResult.name)
                     apply()
                 }
 
