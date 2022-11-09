@@ -39,7 +39,7 @@ class StoryListAdapter(private val listStory: List<StoryModel>) :
             .load(story.photoUrl)
             .into(holder.image)
 
-        holder.itemView.setOnClickListener { onItemClickCallback.onItemClicked(story) }
+        holder.itemView.setOnClickListener { onItemClickCallback.onItemClicked(story, holder) }
     }
 
     override fun getItemCount(): Int {
@@ -47,6 +47,6 @@ class StoryListAdapter(private val listStory: List<StoryModel>) :
     }
 
     interface OnItemClickCallback {
-        fun onItemClicked(story: StoryModel)
+        fun onItemClicked(story: StoryModel, listViewHolder: ListViewHolder)
     }
 }

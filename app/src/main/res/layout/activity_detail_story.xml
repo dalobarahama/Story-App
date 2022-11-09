@@ -15,6 +15,7 @@
             android:id="@+id/detail_story_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:transitionName="detail_story_image"
             tools:src="@drawable/ic_launcher_background" />
 
         <TextView
@@ -24,12 +25,14 @@
             android:layout_marginTop="8dp"
             android:textSize="24sp"
             android:textStyle="bold"
+            android:transitionName="detail_story_username"
             tools:text="username" />
 
         <TextView
             android:id="@+id/tv_detail_story_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:transitionName="detail_story_description"
             tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eget dignissim sapien. In nulla nisl, luctus aliquam dapibus sed, fermentum id ipsum. Morbi dictum lectus vel semper lacinia. Donec diam libero, fermentum id magna eget, malesuada sodales mi. Ut dignissim mi ut tortor commodo elementum. Fusce consectetur gravida lacinia. Ut pharetra nulla ac quam sagittis gravida. Ut laoreet et erat ac ullamcorper." />
     </LinearLayout>
 </ScrollView>

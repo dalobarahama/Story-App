@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,7 +25,7 @@ class StoryListFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_story_list, container, false)
     }
@@ -58,10 +60,20 @@ class StoryListFragment : Fragment() {
         recyclerView.adapter = storyListAdapter
 
         storyListAdapter.setOnItemCallback(object : StoryListAdapter.OnItemClickCallback {
-            override fun onItemClicked(story: StoryModel) {
+            override fun onItemClicked(
+                story: StoryModel,
+                listViewHolder: StoryListAdapter.ListViewHolder,
+            ) {
+                val optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    requireActivity(),
+                    Pair(listViewHolder.image, "detail_story_image"),
+                    Pair(listViewHolder.username, "detail_story_username"),
+                    Pair(listViewHolder.description, "detail_story_description"),
+                )
+
                 val intent = Intent(context, DetailStoryActivity::class.java)
                 intent.putExtra(DetailStoryActivity.STORY_ID, story.id)
-                startActivity(intent)
+                startActivity(intent, optionsCompat.toBundle())
             }
         })
     }

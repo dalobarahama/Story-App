@@ -1,5 +1,7 @@
 package com.example.storyapp.view.auth
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -14,6 +16,12 @@ import com.example.storyapp.view.MainActivity
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
+    private lateinit var loginButton: Button
+    private lateinit var register: TextView
+    private lateinit var etEmail: EditText
+    private lateinit var etPassword: MyEditText
+    private lateinit var image: ImageView
+    private lateinit var tvLogin: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,10 +29,12 @@ class LoginActivity : AppCompatActivity() {
 
         progressBar = findViewById(R.id.progress_circular_login)
 
-        val loginButton = findViewById<Button>(R.id.btn_login)
-        val register = findViewById<TextView>(R.id.tv_register)
-        val etEmail = findViewById<EditText>(R.id.et_login_email)
-        val etPassword = findViewById<MyEditText>(R.id.et_login_password)
+        loginButton = findViewById(R.id.btn_login)
+        register = findViewById(R.id.tv_register)
+        etEmail = findViewById(R.id.et_login_email)
+        etPassword = findViewById(R.id.et_login_password)
+        image = findViewById(R.id.iv_login_logo)
+        tvLogin = findViewById(R.id.tv_login)
 
         loginButton.setOnClickListener {
             progressBar.visibility = View.VISIBLE
@@ -34,6 +44,8 @@ class LoginActivity : AppCompatActivity() {
             )
         }
         register.setOnClickListener { goToRegister() }
+
+        playAnimation()
     }
 
     private fun goToRegister() {
@@ -66,6 +78,25 @@ class LoginActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE
                 Toast.makeText(this, "Email atau password salah", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun playAnimation() {
+        ObjectAnimator.ofFloat(image, View.TRANSLATION_X, -30f, 30f).apply {
+            duration = 6000
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }.start()
+
+        val title = ObjectAnimator.ofFloat(tvLogin, View.ALPHA, 1f).setDuration(500)
+        val email = ObjectAnimator.ofFloat(etEmail, View.ALPHA, 1f).setDuration(500)
+        val password = ObjectAnimator.ofFloat(etPassword, View.ALPHA, 1f).setDuration(500)
+        val register = ObjectAnimator.ofFloat(register, View.ALPHA, 1f).setDuration(500)
+        val button = ObjectAnimator.ofFloat(loginButton, View.ALPHA, 1f).setDuration(500)
+
+        AnimatorSet().apply {
+            playSequentially(title, email, password, register, button)
+            start()
         }
     }
 }
