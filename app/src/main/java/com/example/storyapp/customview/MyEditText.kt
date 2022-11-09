@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.method.HideReturnsTransformationMethod
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -14,8 +13,7 @@ import com.example.storyapp.R
 
 class MyEditText : AppCompatEditText, View.OnTouchListener {
 
-    private lateinit var showPassword: Drawable
-    private lateinit var hidePassword: Drawable
+    private lateinit var clearButton: Drawable
 
     constructor(context: Context) : super(context) {
         init()
@@ -34,11 +32,10 @@ class MyEditText : AppCompatEditText, View.OnTouchListener {
     }
 
     private fun init() {
-        showPassword =
-            ContextCompat.getDrawable(context, R.drawable.ic_baseline_visibility) as Drawable
-        hidePassword =
-            ContextCompat.getDrawable(context, R.drawable.ic_baseline_visibility_off) as Drawable
-//        setOnTouchListener(this)
+        clearButton =
+            ContextCompat.getDrawable(context, R.drawable.ic_baseline_clear) as Drawable
+
+        setOnTouchListener(this)
 
         addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -46,7 +43,10 @@ class MyEditText : AppCompatEditText, View.OnTouchListener {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
+                if (p0.toString().isNotEmpty()) showClearButton() else hideHideButton()
+                if (p0?.count() in 1..5) {
+                    error = "Password harus 6 karakter"
+                }
             }
 
             override fun afterTextChanged(p0: Editable?) {
@@ -62,12 +62,12 @@ class MyEditText : AppCompatEditText, View.OnTouchListener {
             val buttonEnd: Float
             var isButtonClicked = false
             if (layoutDirection == View.LAYOUT_DIRECTION_RTL) {
-                buttonEnd = (hidePassword.intrinsicWidth + paddingStart).toFloat()
+                buttonEnd = (clearButton.intrinsicWidth + paddingStart).toFloat()
                 when {
                     event.x < buttonEnd -> isButtonClicked = true
                 }
             } else {
-                buttonStart = (width - paddingEnd - hidePassword.intrinsicWidth).toFloat()
+                buttonStart = (width - paddingEnd - clearButton.intrinsicWidth).toFloat()
                 when {
                     event.x > buttonStart -> isButtonClicked = true
                 }
@@ -75,19 +75,22 @@ class MyEditText : AppCompatEditText, View.OnTouchListener {
             if (isButtonClicked) {
                 when (event.action) {
                     MotionEvent.ACTION_BUTTON_PRESS -> {
-                        showPassword = ContextCompat.getDrawable(
+                        clearButton = ContextCompat.getDrawable(
                             context,
-                            R.drawable.ic_baseline_visibility
+                            R.drawable.ic_baseline_clear
                         ) as Drawable
-                        showPasswordButton()
+                        showClearButton()
                         return true
                     }
                     MotionEvent.ACTION_UP -> {
-                        hidePassword = ContextCompat.getDrawable(
+                        clearButton = ContextCompat.getDrawable(
                             context,
-                            R.drawable.ic_baseline_visibility_off
+                            R.drawable.ic_baseline_clear
                         ) as Drawable
-                        hidePasswordButton()
+                        when {
+                            text != null -> text?.clear()
+                        }
+                        hideHideButton()
                         return true
                     }
                     else -> return false
@@ -97,19 +100,19 @@ class MyEditText : AppCompatEditText, View.OnTouchListener {
         return false
     }
 
-    private fun showPasswordButton() {
-        setButtonDrawables(endOfTheText = showPassword)
+    private fun showClearButton() {
+        setButtonDrawables(endOfTheText = clearButton)
     }
 
-    private fun hidePasswordButton() {
-        setButtonDrawables(endOfTheText = hidePassword)
+    private fun hideHideButton() {
+        setButtonDrawables()
     }
 
     private fun setButtonDrawables(
         startOfTheText: Drawable? = null,
         topOfTheText: Drawable? = null,
         endOfTheText: Drawable? = null,
-        bottomOfTheText: Drawable? = null
+        bottomOfTheText: Drawable? = null,
     ) {
         setCompoundDrawablesWithIntrinsicBounds(
             startOfTheText,

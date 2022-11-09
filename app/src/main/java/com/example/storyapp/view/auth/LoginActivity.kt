@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.storyapp.R
+import com.example.storyapp.customview.MyEditText
 import com.example.storyapp.network.RestApiService
 import com.example.storyapp.view.MainActivity
 
@@ -23,7 +24,7 @@ class LoginActivity : AppCompatActivity() {
         val loginButton = findViewById<Button>(R.id.btn_login)
         val register = findViewById<TextView>(R.id.tv_register)
         val etEmail = findViewById<EditText>(R.id.et_login_email)
-        val etPassword = findViewById<EditText>(R.id.et_login_password)
+        val etPassword = findViewById<MyEditText>(R.id.et_login_password)
 
         loginButton.setOnClickListener {
             progressBar.visibility = View.VISIBLE
