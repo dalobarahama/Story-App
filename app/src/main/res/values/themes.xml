@@ -15,8 +15,8 @@
     </style>
 
     <style name="Theme.StoryApp.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/story_logo</item>
         <item name="postSplashScreenTheme">@style/Theme.StoryApp</item>
-
     </style>
 </resources>

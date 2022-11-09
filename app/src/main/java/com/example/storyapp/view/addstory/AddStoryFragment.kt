@@ -38,7 +38,7 @@ class AddStoryFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_add_story, container, false)
     }
@@ -117,7 +117,6 @@ class AddStoryFragment : Fragment() {
     private var cameraResultLauncher =
         registerForActivityResult(StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val intent: Intent? = result.data
                 context?.let {
                     Glide.with(it)
                         .load(uri)
@@ -145,7 +144,7 @@ class AddStoryFragment : Fragment() {
         description: RequestBody,
         imageUri: MultipartBody.Part,
         lat: RequestBody?,
-        lon: RequestBody?
+        lon: RequestBody?,
     ) {
         val apiService = RestApiService()
         apiService.uploadStory(token, description, imageUri, lat, lon) {
