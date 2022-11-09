@@ -5,10 +5,10 @@
     android:layout_height="match_parent"
     tools:context=".view.SplashActivity">
 
-    <TextView
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="SplashScreen" />
+        android:src="@drawable/story_logo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
