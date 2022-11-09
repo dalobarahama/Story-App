@@ -9,10 +9,13 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.storyapp.R
+import com.example.storyapp.customview.MyEditText
 import com.example.storyapp.network.RestApiService
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
+    private lateinit var password: MyEditText
+    private lateinit var confirmPassword: MyEditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,16 +26,25 @@ class RegisterActivity : AppCompatActivity() {
         val registerButton = findViewById<Button>(R.id.btn_register)
         val username = findViewById<EditText>(R.id.et_register_name)
         val email = findViewById<EditText>(R.id.et_register_email)
-        val password = findViewById<EditText>(R.id.et_register_password)
+        password = findViewById(R.id.et_register_password)
+        confirmPassword = findViewById(R.id.et_register_confirm_password)
 
         registerButton.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
-            register(
-                username.text.toString(),
-                email.text.toString(),
-                password.text.toString()
-            )
+            if (isPasswordSame()) {
+                progressBar.visibility = View.VISIBLE
+                register(
+                    username.text.toString(),
+                    email.text.toString(),
+                    password.text.toString()
+                )
+            } else {
+                Toast.makeText(this, "Password tidak sama", Toast.LENGTH_SHORT).show()
+            }
         }
+    }
+
+    private fun isPasswordSame(): Boolean {
+        return password.text.toString() == confirmPassword.text.toString()
     }
 
     private fun goToLogin() {

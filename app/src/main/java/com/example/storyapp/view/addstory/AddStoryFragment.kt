@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.storyapp.R
 import com.example.storyapp.network.RestApiService
+import com.example.storyapp.view.storylist.StoryListFragment
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -151,6 +152,10 @@ class AddStoryFragment : Fragment() {
             if (it?.error == false) {
                 progressBar.visibility = View.GONE
                 Toast.makeText(context, "Story Uploaded", Toast.LENGTH_SHORT).show()
+
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, StoryListFragment())
+                    .commit()
             }
         }
     }
