@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import com.example.storyapp.R
 import com.example.storyapp.view.addstory.AddStoryFragment
 import com.example.storyapp.view.profile.ProfileActivity
-import com.example.storyapp.view.profile.ProfileFragment
+import com.example.storyapp.view.storyinmap.StoryInMapFragment
 import com.example.storyapp.view.storylist.StoryListFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -31,8 +31,8 @@ class MainActivity : AppCompatActivity() {
                     loadFragment(AddStoryFragment())
                     return@setOnItemSelectedListener true
                 }
-                R.id.profile_menu -> {
-                    loadFragment(ProfileFragment())
+                R.id.story_in_map_menu -> {
+                    loadFragment(StoryInMapFragment())
                     return@setOnItemSelectedListener true
                 }
                 else -> return@setOnItemSelectedListener false

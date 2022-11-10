@@ -2,4 +2,6 @@
     <string name="app_name">Story App</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="google_api_key">AIzaSyCGHEyj7ljm3jkFWqx9_3CeF2yvMzUH3lI</string>
 </resources>
