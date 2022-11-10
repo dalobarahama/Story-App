@@ -15,7 +15,7 @@ interface ApiService {
     @POST("login")
     fun login(
         @Field("email") email: String,
-        @Field("password") password: String
+        @Field("password") password: String,
     ): Call<LoginResponse>
 
     @FormUrlEncoded
@@ -23,7 +23,7 @@ interface ApiService {
     fun register(
         @Field("name") name: String,
         @Field("email") email: String,
-        @Field("password") password: String
+        @Field("password") password: String,
     ): Call<CommonResponse>
 
     @Multipart
@@ -33,15 +33,18 @@ interface ApiService {
         @Part("description") description: RequestBody,
         @Part image: MultipartBody.Part,
         @Part("lat") lat: RequestBody?,
-        @Part("lon") lon: RequestBody?
+        @Part("lon") lon: RequestBody?,
     ): Call<CommonResponse>
 
     @GET("stories")
     fun getStories(@Header("Authorization") token: String): Call<StoryResponse>
 
+    @GET("stories?location=1")
+    fun getStoriesWithLocation(@Header("Authorization") token: String): Call<StoryResponse>
+
     @GET("stories/{id}")
     fun getDetailStory(
         @Header("Authorization") token: String,
-        @Path("id") idStory: String
+        @Path("id") idStory: String,
     ): Call<DetailStoryResponse>
 }

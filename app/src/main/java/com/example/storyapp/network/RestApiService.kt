@@ -18,13 +18,13 @@ class RestApiService {
         name: String,
         email: String,
         password: String,
-        onResult: (CommonResponse?) -> Unit
+        onResult: (CommonResponse?) -> Unit,
     ) {
         retrofit.register(name, email, password).enqueue(
             object : Callback<CommonResponse> {
                 override fun onResponse(
                     call: Call<CommonResponse>,
-                    response: Response<CommonResponse>
+                    response: Response<CommonResponse>,
                 ) {
                     onResult(response.body())
                 }
@@ -42,7 +42,7 @@ class RestApiService {
             object : Callback<LoginResponse> {
                 override fun onResponse(
                     call: Call<LoginResponse>,
-                    response: Response<LoginResponse>
+                    response: Response<LoginResponse>,
                 ) {
                     onResult(response.body())
                 }
@@ -61,13 +61,13 @@ class RestApiService {
         image: MultipartBody.Part,
         lat: RequestBody?,
         lon: RequestBody?,
-        onResult: (CommonResponse?) -> Unit
+        onResult: (CommonResponse?) -> Unit,
     ) {
         retrofit.uploadStory(token, description, image, lat, lon)
             .enqueue(object : Callback<CommonResponse> {
                 override fun onResponse(
                     call: Call<CommonResponse>,
-                    response: Response<CommonResponse>
+                    response: Response<CommonResponse>,
                 ) {
                     Log.d("RestApiService", "onResponse: called")
                     Log.d("RestApiService", "onResponse: $response")
@@ -88,7 +88,25 @@ class RestApiService {
             object : Callback<StoryResponse> {
                 override fun onResponse(
                     call: Call<StoryResponse>,
-                    response: Response<StoryResponse>
+                    response: Response<StoryResponse>,
+                ) {
+                    onResult(response.body())
+                }
+
+                override fun onFailure(call: Call<StoryResponse>, t: Throwable) {
+                    onResult(null)
+                }
+
+            }
+        )
+    }
+
+    fun getStoriesWithLocation(token: String, onResult: (StoryResponse?) -> Unit) {
+        retrofit.getStoriesWithLocation(token).enqueue(
+            object : Callback<StoryResponse> {
+                override fun onResponse(
+                    call: Call<StoryResponse>,
+                    response: Response<StoryResponse>,
                 ) {
                     onResult(response.body())
                 }
@@ -106,7 +124,7 @@ class RestApiService {
             object : Callback<DetailStoryResponse> {
                 override fun onResponse(
                     call: Call<DetailStoryResponse>,
-                    response: Response<DetailStoryResponse>
+                    response: Response<DetailStoryResponse>,
                 ) {
                     onResult(response.body())
                 }
