@@ -66,34 +66,40 @@ class AddStoryFragment : Fragment() {
         }
 
         uploadButton.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
+            if (imageView.drawable == null || description.text.isEmpty()) {
+                Toast.makeText(context, "Image or description cannot be empty", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                progressBar.visibility = View.VISIBLE
 
-            val path: File =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-            val file = File.createTempFile("image", ".jpg", path)
+                val path: File =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                val file = File.createTempFile("image", ".jpg", path)
 
-            val contentResolver: ContentResolver = requireContext().contentResolver
+                val contentResolver: ContentResolver = requireContext().contentResolver
 
-            val inputStream = contentResolver.openInputStream(imageUri) as InputStream
-            val outputStream: OutputStream = FileOutputStream(file)
-            val buf = ByteArray(1024)
-            var len: Int
-            while (inputStream.read(buf).also { len = it } > 0) outputStream.write(buf, 0, len)
-            outputStream.close()
-            inputStream.close()
+                val inputStream = contentResolver.openInputStream(imageUri) as InputStream
+                val outputStream: OutputStream = FileOutputStream(file)
+                val buf = ByteArray(1024)
+                var len: Int
+                while (inputStream.read(buf).also { len = it } > 0) outputStream.write(buf, 0, len)
+                outputStream.close()
+                inputStream.close()
 
-            val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-            val descRequestBody = description.text.toString()
-                .toRequestBody("text/plain".toMediaType())
+                val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                val descRequestBody = description.text.toString()
+                    .toRequestBody("text/plain".toMediaType())
 
-            val imageRequestBody =
-                MultipartBody.Part.createFormData("photo", file.name, requestFile)
+                val imageRequestBody =
+                    MultipartBody.Part.createFormData("photo", file.name, requestFile)
 
-            uploadStory(token, descRequestBody, imageRequestBody, null, null)
+                uploadStory(token, descRequestBody, imageRequestBody, null, null)
 
-            Log.d("AddStoryFragment", "requestBody: $requestFile")
-            Log.d("AddStoryFragment", "file: $file")
+                Log.d("AddStoryFragment", "requestBody: $requestFile")
+                Log.d("AddStoryFragment", "file: $file")
+            }
         }
+
     }
 
     private fun openCamera() {
@@ -156,6 +162,9 @@ class AddStoryFragment : Fragment() {
                 requireActivity().supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, StoryListFragment())
                     .commit()
+            } else {
+                progressBar.visibility = View.GONE
+                Toast.makeText(context, "Upload Failed", Toast.LENGTH_SHORT).show()
             }
         }
     }
