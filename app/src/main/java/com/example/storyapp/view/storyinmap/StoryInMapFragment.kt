@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.storyapp.R
 import com.example.storyapp.model.StoryModel
@@ -22,7 +21,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 class StoryInMapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private val boundsBuilder = LatLngBounds.builder()
-    private var token: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,8 +55,6 @@ class StoryInMapFragment : Fragment(), OnMapReadyCallback {
         val apiService = RestApiService()
         apiService.getStoriesWithLocation(token) {
             if (it?.error == false) {
-                Toast.makeText(context, "stories length: ${it.listStory.size}", Toast.LENGTH_SHORT)
-                    .show()
                 addManyMarker(it.listStory)
             }
         }
