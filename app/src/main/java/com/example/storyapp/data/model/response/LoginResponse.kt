@@ -1,6 +1,6 @@
-package com.example.storyapp.model.response
+package com.example.storyapp.data.model.response
 
-import com.example.storyapp.model.UserModel
+import com.example.storyapp.data.model.UserModel
 
 data class LoginResponse(
     var error: Boolean,

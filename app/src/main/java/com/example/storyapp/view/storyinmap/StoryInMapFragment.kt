@@ -6,9 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.storyapp.R
-import com.example.storyapp.model.StoryModel
-import com.example.storyapp.network.RestApiService
+import com.example.storyapp.data.model.StoryModel
+import com.example.storyapp.viewmodel.StoryViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -39,7 +40,11 @@ class StoryInMapFragment : Fragment(), OnMapReadyCallback {
 
         val sharedPref = view.context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
         val token = sharedPref.getString("token", "123") ?: ""
-        getStoriesWithLocation(token)
+        val viewModel = ViewModelProvider(this)[StoryViewModel::class.java]
+        viewModel.getStoryWithLocation(token)
+        viewModel.observeStoryWithLocationLiveData().observe(viewLifecycleOwner) {
+            addManyMarker(it)
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -49,15 +54,6 @@ class StoryInMapFragment : Fragment(), OnMapReadyCallback {
         map.uiSettings.isIndoorLevelPickerEnabled = true
         map.uiSettings.isCompassEnabled = true
         map.uiSettings.isMapToolbarEnabled = true
-    }
-
-    private fun getStoriesWithLocation(token: String) {
-        val apiService = RestApiService()
-        apiService.getStoriesWithLocation(token) {
-            if (it?.error == false) {
-                addManyMarker(it.listStory)
-            }
-        }
     }
 
     private fun addManyMarker(listStory: List<StoryModel>) {

@@ -1,4 +1,4 @@
-package com.example.storyapp.model.response
+package com.example.storyapp.data.model.response
 
 data class CommonResponse(
     val error: Boolean,

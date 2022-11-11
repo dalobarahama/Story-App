@@ -7,17 +7,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.storyapp.R
-import com.example.storyapp.model.StoryModel
-import com.example.storyapp.network.RestApiService
+import com.example.storyapp.data.model.StoryModel
 import com.example.storyapp.view.adapter.StoryListAdapter
 import com.example.storyapp.view.detailstory.DetailStoryActivity
+import com.example.storyapp.viewmodel.StoryViewModel
 
 class StoryListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
@@ -38,20 +38,14 @@ class StoryListFragment : Fragment() {
 
         val sharedPref = view.context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
         val token = sharedPref.getString("token", "123") ?: ""
-        getStories(token)
+
+        val viewModel = ViewModelProvider(this)[StoryViewModel::class.java]
+        viewModel.getStory(token)
+        viewModel.observeStoryLiveData().observe(viewLifecycleOwner) {
+            showRecyclerList(it)
+        }
 
         Log.d("StoryListFragment", "token: $token")
-    }
-
-    private fun getStories(token: String) {
-        val apiService = RestApiService()
-        apiService.getStories(token) {
-            if (it?.error == false) {
-                showRecyclerList(it.listStory)
-            } else {
-                Toast.makeText(context, "Error to load stories", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     private fun showRecyclerList(list: List<StoryModel>) {

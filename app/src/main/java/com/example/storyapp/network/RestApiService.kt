@@ -1,10 +1,10 @@
 package com.example.storyapp.network
 
 import android.util.Log
-import com.example.storyapp.model.response.CommonResponse
-import com.example.storyapp.model.response.DetailStoryResponse
-import com.example.storyapp.model.response.LoginResponse
-import com.example.storyapp.model.response.StoryResponse
+import com.example.storyapp.data.model.response.CommonResponse
+import com.example.storyapp.data.model.response.DetailStoryResponse
+import com.example.storyapp.data.model.response.LoginResponse
+import com.example.storyapp.data.model.response.StoryResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
