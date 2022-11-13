@@ -10,7 +10,8 @@ import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.storyapp.R
@@ -18,10 +19,13 @@ import com.example.storyapp.data.model.StoryModel
 import com.example.storyapp.view.adapter.StoryListAdapter
 import com.example.storyapp.view.detailstory.DetailStoryActivity
 import com.example.storyapp.viewmodel.StoryViewModel
+import com.example.storyapp.viewmodel.ViewModelFactory
 
 class StoryListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var storyListAdapter: StoryListAdapter
+    private val viewModel: StoryViewModel by viewModels {
+        ViewModelFactory()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,19 +43,18 @@ class StoryListFragment : Fragment() {
         val sharedPref = view.context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
         val token = sharedPref.getString("token", "123") ?: ""
 
-        val viewModel = ViewModelProvider(this)[StoryViewModel::class.java]
-        viewModel.getStory(token)
-        viewModel.observeStoryLiveData().observe(viewLifecycleOwner) {
+        viewModel.getStory(token).observe(viewLifecycleOwner) {
             showRecyclerList(it)
         }
-
         Log.d("StoryListFragment", "token: $token")
     }
 
-    private fun showRecyclerList(list: List<StoryModel>) {
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        storyListAdapter = StoryListAdapter(list)
+    private fun showRecyclerList(list: PagingData<StoryModel>) {
+        Log.d("StoryListFragment", "list: $list")
+        val storyListAdapter = StoryListAdapter()
         recyclerView.adapter = storyListAdapter
+        storyListAdapter.submitData(lifecycle, list)
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
         storyListAdapter.setOnItemCallback(object : StoryListAdapter.OnItemClickCallback {
             override fun onItemClicked(
