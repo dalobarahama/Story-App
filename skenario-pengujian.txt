@@ -1,0 +1,2 @@
+StoryAppViewModel:
+- Memastikan data tidak null.
