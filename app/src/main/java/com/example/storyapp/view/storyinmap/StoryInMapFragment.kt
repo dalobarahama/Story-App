@@ -6,10 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import com.example.storyapp.R
 import com.example.storyapp.data.model.StoryModel
 import com.example.storyapp.viewmodel.StoryViewModel
+import com.example.storyapp.viewmodel.ViewModelFactory
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -22,6 +23,9 @@ import com.google.android.gms.maps.model.MarkerOptions
 class StoryInMapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private val boundsBuilder = LatLngBounds.builder()
+    private val viewModel: StoryViewModel by viewModels {
+        ViewModelFactory()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,7 +44,7 @@ class StoryInMapFragment : Fragment(), OnMapReadyCallback {
 
         val sharedPref = view.context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
         val token = sharedPref.getString("token", "123") ?: ""
-        val viewModel = ViewModelProvider(this)[StoryViewModel::class.java]
+
         viewModel.getStoryWithLocation(token)
         viewModel.observeStoryWithLocationLiveData().observe(viewLifecycleOwner) {
             addManyMarker(it)
