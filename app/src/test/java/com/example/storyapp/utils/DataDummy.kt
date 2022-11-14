@@ -6,7 +6,7 @@ import com.example.storyapp.data.model.response.StoryResponse
 import retrofit2.Response
 
 object DataDummy {
-    private fun generateDataDummy(): List<StoryModel> {
+    fun getDataDummyWithLocation(): List<StoryModel> {
         val storyList = ArrayList<StoryModel>()
         for (i in 1..10) {
             val story = StoryModel(

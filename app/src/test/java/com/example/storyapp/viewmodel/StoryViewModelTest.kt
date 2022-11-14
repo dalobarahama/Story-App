@@ -32,6 +32,7 @@ class StoryViewModelTest {
     private lateinit var repository: StoryAppRepository
     private lateinit var storyViewModel: StoryViewModel
     private val dummyStory = DataDummy.generatePagingDataDummy()
+    private val dummyStoryWithLocation = DataDummy.getDataDummyWithLocation()
 
     @Before
     fun setUp() {
@@ -49,6 +50,22 @@ class StoryViewModelTest {
             Assert.assertNotNull(actualData)
         } finally {
             storyViewModel.getStory("token").removeObserver(observer)
+        }
+
+    }
+
+    @Test
+    fun `when Get StoryListWithLocation should not null`() {
+        val observer = Observer<List<StoryModel>> {}
+        try {
+            val expectedStory = MutableLiveData<List<StoryModel>>()
+            expectedStory.value = dummyStoryWithLocation
+            `when`(repository.getStoryWithLocation("token")).thenReturn(expectedStory)
+            val actualData =
+                storyViewModel.getStoryWithLocation("token").observeForever(observer)
+            Assert.assertNotNull(actualData)
+        } finally {
+            storyViewModel.getStoryWithLocation("token").removeObserver(observer)
         }
 
     }

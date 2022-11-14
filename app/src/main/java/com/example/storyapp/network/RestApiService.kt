@@ -83,15 +83,14 @@ class RestApiService {
             })
     }
 
-//    fun getStories(token: String, page: Int, pageSize: Int, onResult: (StoryResponse?) -> Unit) {
-//        retrofit.getStories(token, page, pageSize).enqueue(
+//    fun getStoriesWithLocation(token: String, onResult: (StoryResponse?) -> Unit) {
+//        retrofit.getStoriesWithLocation(token).enqueue(
 //            object : Callback<StoryResponse> {
 //                override fun onResponse(
 //                    call: Call<StoryResponse>,
 //                    response: Response<StoryResponse>,
 //                ) {
 //                    onResult(response.body())
-//                    Log.d("RestApiService", "onResponse: ${response.body()}")
 //                }
 //
 //                override fun onFailure(call: Call<StoryResponse>, t: Throwable) {
@@ -101,24 +100,6 @@ class RestApiService {
 //            }
 //        )
 //    }
-
-    fun getStoriesWithLocation(token: String, onResult: (StoryResponse?) -> Unit) {
-        retrofit.getStoriesWithLocation(token).enqueue(
-            object : Callback<StoryResponse> {
-                override fun onResponse(
-                    call: Call<StoryResponse>,
-                    response: Response<StoryResponse>,
-                ) {
-                    onResult(response.body())
-                }
-
-                override fun onFailure(call: Call<StoryResponse>, t: Throwable) {
-                    onResult(null)
-                }
-
-            }
-        )
-    }
 
     fun getDetailStory(token: String, idStory: String, onResult: (DetailStoryResponse?) -> Unit) {
         retrofit.getDetailStory(token, idStory).enqueue(

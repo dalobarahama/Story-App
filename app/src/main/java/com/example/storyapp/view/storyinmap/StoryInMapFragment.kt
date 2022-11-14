@@ -45,8 +45,8 @@ class StoryInMapFragment : Fragment(), OnMapReadyCallback {
         val sharedPref = view.context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
         val token = sharedPref.getString("token", "123") ?: ""
 
-        viewModel.getStoryWithLocation(token)
-        viewModel.observeStoryWithLocationLiveData().observe(viewLifecycleOwner) {
+//        viewModel.getStoryWithLocation(token)
+        viewModel.getStoryWithLocation(token).observe(viewLifecycleOwner) {
             addManyMarker(it)
         }
     }
