@@ -13,7 +13,6 @@ import com.example.storyapp.network.ApiService
 class StoryAppRepository constructor(private val apiService: ApiService) {
 
     fun getStory(token: String): LiveData<PagingData<StoryModel>> {
-        Log.d("StoryViewModel", "getStory called")
         return Pager(
             config = PagingConfig(
                 pageSize = 5,
