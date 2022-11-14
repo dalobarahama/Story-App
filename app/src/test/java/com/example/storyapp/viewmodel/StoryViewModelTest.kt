@@ -52,19 +52,4 @@ class StoryViewModelTest {
         }
 
     }
-
-//    @Test
-//    fun `when Get StoryListWithLocation should not null`() {
-//        val observer = Observer<PagingData<StoryModel>> {}
-//        try {
-//            val expectedStory = MutableLiveData<PagingData<StoryModel>>()
-//            expectedStory.value = dummyStory
-//            `when`(repository.getStory("token")).thenReturn(expectedStory)
-//            val actualData = storyViewModel.getStory("token").observeForever(observer)
-//            Assert.assertNotNull(actualData)
-//        } finally {
-//            storyViewModel.getStory("token").removeObserver(observer)
-//        }
-//
-//    }
 }
