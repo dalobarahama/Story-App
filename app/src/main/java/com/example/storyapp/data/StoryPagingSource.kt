@@ -15,8 +15,8 @@ class StoryPagingSource(private val apiService: ApiService, private val token: S
 
     override fun getRefreshKey(state: PagingState<Int, StoryModel>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
-            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
-                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
+            val anchorPage = state.closestPageToPosition(anchorPosition)
+            anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
         }
     }
 
@@ -26,6 +26,7 @@ class StoryPagingSource(private val apiService: ApiService, private val token: S
             val page = params.key ?: INITIAL_PAGE_INDEX
             val storyList = apiService.getStories(token, page, params.loadSize).body()?.listStory
 
+            Log.d("StoryPagingSource", "load size: ${params.loadSize}")
             Log.d("StoryPagingSource", "load list: ${storyList?.size}")
             Log.d("StoryPagingSource", "story name: ${storyList!![0].name}")
             Log.d("StoryPagingSource", "page: $page")

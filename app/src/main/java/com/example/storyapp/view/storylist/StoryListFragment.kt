@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.storyapp.R
 import com.example.storyapp.data.model.StoryModel
+import com.example.storyapp.view.adapter.LoadingStateAdapter
 import com.example.storyapp.view.adapter.StoryListAdapter
 import com.example.storyapp.view.detailstory.DetailStoryActivity
 import com.example.storyapp.viewmodel.StoryViewModel
@@ -52,7 +53,11 @@ class StoryListFragment : Fragment() {
     private fun showRecyclerList(list: PagingData<StoryModel>) {
         Log.d("StoryListFragment", "list: $list")
         val storyListAdapter = StoryListAdapter()
-        recyclerView.adapter = storyListAdapter
+        recyclerView.adapter = storyListAdapter.withLoadStateFooter(
+            footer = LoadingStateAdapter {
+                storyListAdapter.retry()
+            }
+        )
         storyListAdapter.submitData(lifecycle, list)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
