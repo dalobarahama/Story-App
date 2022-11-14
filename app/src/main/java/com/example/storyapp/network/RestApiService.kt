@@ -1,10 +1,10 @@
 package com.example.storyapp.network
 
 import android.util.Log
-import com.example.storyapp.model.response.CommonResponse
-import com.example.storyapp.model.response.DetailStoryResponse
-import com.example.storyapp.model.response.LoginResponse
-import com.example.storyapp.model.response.StoryResponse
+import com.example.storyapp.data.model.response.CommonResponse
+import com.example.storyapp.data.model.response.DetailStoryResponse
+import com.example.storyapp.data.model.response.LoginResponse
+import com.example.storyapp.data.model.response.StoryResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -18,13 +18,13 @@ class RestApiService {
         name: String,
         email: String,
         password: String,
-        onResult: (CommonResponse?) -> Unit
+        onResult: (CommonResponse?) -> Unit,
     ) {
         retrofit.register(name, email, password).enqueue(
             object : Callback<CommonResponse> {
                 override fun onResponse(
                     call: Call<CommonResponse>,
-                    response: Response<CommonResponse>
+                    response: Response<CommonResponse>,
                 ) {
                     onResult(response.body())
                 }
@@ -42,7 +42,7 @@ class RestApiService {
             object : Callback<LoginResponse> {
                 override fun onResponse(
                     call: Call<LoginResponse>,
-                    response: Response<LoginResponse>
+                    response: Response<LoginResponse>,
                 ) {
                     onResult(response.body())
                 }
@@ -61,13 +61,13 @@ class RestApiService {
         image: MultipartBody.Part,
         lat: RequestBody?,
         lon: RequestBody?,
-        onResult: (CommonResponse?) -> Unit
+        onResult: (CommonResponse?) -> Unit,
     ) {
         retrofit.uploadStory(token, description, image, lat, lon)
             .enqueue(object : Callback<CommonResponse> {
                 override fun onResponse(
                     call: Call<CommonResponse>,
-                    response: Response<CommonResponse>
+                    response: Response<CommonResponse>,
                 ) {
                     Log.d("RestApiService", "onResponse: called")
                     Log.d("RestApiService", "onResponse: $response")
@@ -83,12 +83,31 @@ class RestApiService {
             })
     }
 
-    fun getStories(token: String, onResult: (StoryResponse?) -> Unit) {
-        retrofit.getStories(token).enqueue(
+//    fun getStories(token: String, page: Int, pageSize: Int, onResult: (StoryResponse?) -> Unit) {
+//        retrofit.getStories(token, page, pageSize).enqueue(
+//            object : Callback<StoryResponse> {
+//                override fun onResponse(
+//                    call: Call<StoryResponse>,
+//                    response: Response<StoryResponse>,
+//                ) {
+//                    onResult(response.body())
+//                    Log.d("RestApiService", "onResponse: ${response.body()}")
+//                }
+//
+//                override fun onFailure(call: Call<StoryResponse>, t: Throwable) {
+//                    onResult(null)
+//                }
+//
+//            }
+//        )
+//    }
+
+    fun getStoriesWithLocation(token: String, onResult: (StoryResponse?) -> Unit) {
+        retrofit.getStoriesWithLocation(token).enqueue(
             object : Callback<StoryResponse> {
                 override fun onResponse(
                     call: Call<StoryResponse>,
-                    response: Response<StoryResponse>
+                    response: Response<StoryResponse>,
                 ) {
                     onResult(response.body())
                 }
@@ -106,7 +125,7 @@ class RestApiService {
             object : Callback<DetailStoryResponse> {
                 override fun onResponse(
                     call: Call<DetailStoryResponse>,
-                    response: Response<DetailStoryResponse>
+                    response: Response<DetailStoryResponse>,
                 ) {
                     onResult(response.body())
                 }

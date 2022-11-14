@@ -7,21 +7,26 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.storyapp.R
-import com.example.storyapp.model.StoryModel
-import com.example.storyapp.network.RestApiService
+import com.example.storyapp.data.model.StoryModel
+import com.example.storyapp.view.adapter.LoadingStateAdapter
 import com.example.storyapp.view.adapter.StoryListAdapter
 import com.example.storyapp.view.detailstory.DetailStoryActivity
+import com.example.storyapp.viewmodel.StoryViewModel
+import com.example.storyapp.viewmodel.ViewModelFactory
 
 class StoryListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var storyListAdapter: StoryListAdapter
+    private val viewModel: StoryViewModel by viewModels {
+        ViewModelFactory()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,26 +43,23 @@ class StoryListFragment : Fragment() {
 
         val sharedPref = view.context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
         val token = sharedPref.getString("token", "123") ?: ""
-        getStories(token)
 
+        viewModel.getStory(token).observe(viewLifecycleOwner) {
+            showRecyclerList(it)
+        }
         Log.d("StoryListFragment", "token: $token")
     }
 
-    private fun getStories(token: String) {
-        val apiService = RestApiService()
-        apiService.getStories(token) {
-            if (it?.error == false) {
-                showRecyclerList(it.listStory)
-            } else {
-                Toast.makeText(context, "Error to load stories", Toast.LENGTH_SHORT).show()
+    private fun showRecyclerList(list: PagingData<StoryModel>) {
+        Log.d("StoryListFragment", "list: $list")
+        val storyListAdapter = StoryListAdapter()
+        recyclerView.adapter = storyListAdapter.withLoadStateFooter(
+            footer = LoadingStateAdapter {
+                storyListAdapter.retry()
             }
-        }
-    }
-
-    private fun showRecyclerList(list: List<StoryModel>) {
+        )
+        storyListAdapter.submitData(lifecycle, list)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        storyListAdapter = StoryListAdapter(list)
-        recyclerView.adapter = storyListAdapter
 
         storyListAdapter.setOnItemCallback(object : StoryListAdapter.OnItemClickCallback {
             override fun onItemClicked(

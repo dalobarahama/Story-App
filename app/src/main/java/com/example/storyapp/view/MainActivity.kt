@@ -1,12 +1,16 @@
 package com.example.storyapp.view
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.storyapp.R
 import com.example.storyapp.view.addstory.AddStoryFragment
-import com.example.storyapp.view.profile.ProfileFragment
+import com.example.storyapp.view.profile.ProfileActivity
+import com.example.storyapp.view.storyinmap.StoryInMapFragment
 import com.example.storyapp.view.storylist.StoryListFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -27,8 +31,8 @@ class MainActivity : AppCompatActivity() {
                     loadFragment(AddStoryFragment())
                     return@setOnItemSelectedListener true
                 }
-                R.id.profile_menu -> {
-                    loadFragment(ProfileFragment())
+                R.id.story_in_map_menu -> {
+                    loadFragment(StoryInMapFragment())
                     return@setOnItemSelectedListener true
                 }
                 else -> return@setOnItemSelectedListener false
@@ -52,5 +56,15 @@ class MainActivity : AppCompatActivity() {
             }
             .setPositiveButton("Yes") { _, _ -> super.onBackPressed() }
             .create().show()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.profile_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        startActivity(Intent(this, ProfileActivity::class.java))
+        return super.onOptionsItemSelected(item)
     }
 }
