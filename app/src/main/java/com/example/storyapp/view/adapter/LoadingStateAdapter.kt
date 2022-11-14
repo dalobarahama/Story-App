@@ -38,7 +38,7 @@ class LoadingStateAdapter(private val retry: () -> Unit) :
         parent: ViewGroup,
         loadState: LoadState,
     ): LoadingStateViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.story_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_loading, parent, false)
         return LoadingStateViewHolder(view)
     }
 }
