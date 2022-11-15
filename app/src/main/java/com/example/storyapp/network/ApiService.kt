@@ -1,9 +1,6 @@
 package com.example.storyapp.network
 
-import com.example.storyapp.data.model.response.CommonResponse
-import com.example.storyapp.data.model.response.DetailStoryResponse
-import com.example.storyapp.data.model.response.LoginResponse
-import com.example.storyapp.data.model.response.StoryResponse
+import com.example.storyapp.data.model.response.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -52,4 +49,12 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("id") idStory: String,
     ): Call<DetailStoryResponse>
+
+    @GET("place/textsearch/json")
+    fun getTextSearch(
+        @Query("key") apiKey: String,
+        @Query("query") locationName: String,
+        @Query("radius") radius: String,
+        @Query("location") location: String,
+    ): Call<MapResponse>
 }

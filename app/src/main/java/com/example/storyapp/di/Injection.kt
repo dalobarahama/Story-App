@@ -8,4 +8,9 @@ object Injection {
         val apiService = ApiClient.getApiService()
         return StoryAppRepository(apiService)
     }
+
+    fun provideMapRepository(): StoryAppRepository {
+        val apiService = ApiClient.getMapsApiService()
+        return StoryAppRepository(apiService)
+    }
 }

@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.storyapp.data.model.StoryModel
+import com.example.storyapp.data.model.response.MapResponse
 import com.example.storyapp.repository.StoryAppRepository
+import com.google.android.gms.maps.model.LatLng
 
 class StoryViewModel constructor(private val storyAppRepository: StoryAppRepository) : ViewModel() {
 //    private var storiesWithLocationLiveData = MutableLiveData<List<StoryModel>>()
@@ -25,4 +27,5 @@ class StoryViewModel constructor(private val storyAppRepository: StoryAppReposit
 
     fun getStoryWithLocation(token: String): LiveData<List<StoryModel>> =
         storyAppRepository.getStoryWithLocation(token)
+
 }

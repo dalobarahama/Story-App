@@ -9,6 +9,8 @@ import androidx.paging.PagingData
 import androidx.paging.liveData
 import com.example.storyapp.data.StoryPagingSource
 import com.example.storyapp.data.model.StoryModel
+import com.example.storyapp.data.model.newdata.NewMapResponse
+import com.example.storyapp.data.model.response.MapResponse
 import com.example.storyapp.data.model.response.StoryResponse
 import com.example.storyapp.network.ApiService
 import retrofit2.Call
@@ -46,5 +48,30 @@ class StoryAppRepository constructor(private val apiService: ApiService) {
             }
         )
         return storiesWithLocationLiveData
+    }
+
+    fun getTextSearch(
+        apiKey: String,
+        locationName: String,
+        radius: String,
+        location: String,
+    ): LiveData<MapResponse> {
+        val mapResponseLiveData = MutableLiveData<MapResponse>()
+        apiService.getTextSearch(apiKey, locationName, radius, location).enqueue(
+            object : Callback<MapResponse> {
+                override fun onResponse(
+                    call: Call<MapResponse>,
+                    response: Response<MapResponse>,
+                ) {
+                    mapResponseLiveData.value = response.body()
+                }
+
+                override fun onFailure(call: Call<MapResponse>, t: Throwable) {
+                    TODO("Not yet implemented")
+                }
+
+            }
+        )
+        return mapResponseLiveData
     }
 }

@@ -10,6 +10,9 @@ class ViewModelFactory :
         if (modelClass.isAssignableFrom(StoryViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return StoryViewModel(Injection.provideRepository()) as T
+        } else {
+            @Suppress("UNCHECKED_CAST")
+            return MapViewModel(Injection.provideMapRepository()) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
