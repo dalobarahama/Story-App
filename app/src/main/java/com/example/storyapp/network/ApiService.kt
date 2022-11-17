@@ -33,8 +33,8 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Part("description") description: RequestBody,
         @Part image: MultipartBody.Part,
-        @Part("lat") lat: RequestBody?,
-        @Part("lon") lon: RequestBody?,
+        @Part("lat") lat: Double?,
+        @Part("lon") lon: Double?,
     ): Call<CommonResponse>
 
     @GET("stories")

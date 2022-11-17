@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.storyapp.data.model.response.CommonResponse
 import com.example.storyapp.data.model.response.DetailStoryResponse
 import com.example.storyapp.data.model.response.LoginResponse
-import com.example.storyapp.data.model.response.StoryResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -59,8 +58,8 @@ class RestApiService {
         token: String,
         description: RequestBody,
         image: MultipartBody.Part,
-        lat: RequestBody?,
-        lon: RequestBody?,
+        lat: Double?,
+        lon: Double?,
         onResult: (CommonResponse?) -> Unit,
     ) {
         retrofit.uploadStory(token, description, image, lat, lon)

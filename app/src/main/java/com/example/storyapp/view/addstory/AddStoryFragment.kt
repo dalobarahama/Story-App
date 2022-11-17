@@ -1,12 +1,14 @@
 package com.example.storyapp.view.addstory
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -24,6 +26,8 @@ import com.bumptech.glide.Glide
 import com.example.storyapp.R
 import com.example.storyapp.network.RestApiService
 import com.example.storyapp.view.storylist.StoryListFragment
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -40,6 +44,9 @@ class AddStoryFragment : Fragment() {
     private lateinit var imageUri: Uri
     private lateinit var progressBar: ProgressBar
     private lateinit var uri: Uri
+
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private var lastKnownLocation: Location? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,6 +67,9 @@ class AddStoryFragment : Fragment() {
 
         val sharedPref = view.context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
         val token = sharedPref.getString("token", "123") ?: ""
+
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
 
         openCameraButton.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
@@ -90,6 +100,8 @@ class AddStoryFragment : Fragment() {
                 Toast.makeText(context, "Image or description cannot be empty", Toast.LENGTH_SHORT)
                     .show()
             } else {
+                getDeviceLocation()
+
                 progressBar.visibility = View.VISIBLE
 
                 val path: File =
@@ -113,9 +125,19 @@ class AddStoryFragment : Fragment() {
                 val imageRequestBody =
                     MultipartBody.Part.createFormData("photo", file.name, requestFile)
 
-                uploadStory(token, descRequestBody, imageRequestBody, null, null)
+                uploadStory(
+                    token,
+                    descRequestBody,
+                    imageRequestBody,
+                    lastKnownLocation?.latitude,
+                    lastKnownLocation?.longitude
+                )
 
                 Log.d("AddStoryFragment", "requestBody: $requestFile")
+                Log.d(
+                    "AddStoryFragment",
+                    "requestBody: lat ${lastKnownLocation?.latitude}, lon ${lastKnownLocation?.longitude}"
+                )
                 Log.d("AddStoryFragment", "file: $file")
             }
         }
@@ -170,8 +192,8 @@ class AddStoryFragment : Fragment() {
         token: String,
         description: RequestBody,
         imageUri: MultipartBody.Part,
-        lat: RequestBody?,
-        lon: RequestBody?,
+        lat: Double?,
+        lon: Double?,
     ) {
         val apiService = RestApiService()
         apiService.uploadStory(token, description, imageUri, lat, lon) {
@@ -199,8 +221,40 @@ class AddStoryFragment : Fragment() {
                 permission[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false -> {
                     openGallery()
                 }
+                permission[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {}
+                permission[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {}
             }
         }
+
+    @SuppressLint("MissingPermission")
+    fun getDeviceLocation() {
+        try {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                val locationResult = fusedLocationProviderClient.lastLocation
+                locationResult.addOnCompleteListener(requireActivity()) { task ->
+                    if (task.isSuccessful) {
+                        lastKnownLocation = task.result
+                    }
+                }
+            } else {
+                requestPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e);
+        }
+    }
 }
 
 
