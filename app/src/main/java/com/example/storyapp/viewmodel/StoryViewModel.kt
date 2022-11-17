@@ -9,20 +9,11 @@ import com.example.storyapp.data.model.StoryModel
 import com.example.storyapp.repository.StoryAppRepository
 
 class StoryViewModel constructor(private val storyAppRepository: StoryAppRepository) : ViewModel() {
-//    private var storiesWithLocationLiveData = MutableLiveData<List<StoryModel>>()
 
-    fun getStory(token: String): LiveData<PagingData<StoryModel>> =
-        storyAppRepository.getStory(token).cachedIn(viewModelScope)
 
-//    fun getStoryWithLocation(token: String) {
-//        val apiService = RestApiService()
-//        apiService.getStoriesWithLocation(token) {
-//            if (it?.error == false) {
-//                storiesWithLocationLiveData.value = it.listStory
-//            }
-//        }
-//    }
+    fun getStory(): LiveData<PagingData<StoryModel>> =
+        storyAppRepository.getStory().cachedIn(viewModelScope)
 
-    fun getStoryWithLocation(token: String): LiveData<List<StoryModel>> =
-        storyAppRepository.getStoryWithLocation(token)
+    fun getStoryWithLocation(): LiveData<List<StoryModel>> =
+        storyAppRepository.getStoryWithLocation()
 }

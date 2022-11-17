@@ -15,6 +15,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 
@@ -45,11 +46,12 @@ class StoryViewModelTest {
         try {
             val expectedStory = MutableLiveData<PagingData<StoryModel>>()
             expectedStory.value = dummyStory
-            `when`(repository.getStory("token")).thenReturn(expectedStory)
-            val actualData = storyViewModel.getStory("token").observeForever(observer)
+            `when`(repository.getStory()).thenReturn(expectedStory)
+            val actualData = storyViewModel.getStory().observeForever(observer)
+            Mockito.verify(repository).getStory()
             Assert.assertNotNull(actualData)
         } finally {
-            storyViewModel.getStory("token").removeObserver(observer)
+            storyViewModel.getStory().removeObserver(observer)
         }
 
     }
@@ -60,12 +62,13 @@ class StoryViewModelTest {
         try {
             val expectedStory = MutableLiveData<List<StoryModel>>()
             expectedStory.value = dummyStoryWithLocation
-            `when`(repository.getStoryWithLocation("token")).thenReturn(expectedStory)
+            `when`(repository.getStoryWithLocation()).thenReturn(expectedStory)
             val actualData =
-                storyViewModel.getStoryWithLocation("token").observeForever(observer)
+                storyViewModel.getStoryWithLocation().observeForever(observer)
+            Mockito.verify(repository).getStoryWithLocation()
             Assert.assertNotNull(actualData)
         } finally {
-            storyViewModel.getStoryWithLocation("token").removeObserver(observer)
+            storyViewModel.getStoryWithLocation().removeObserver(observer)
         }
 
     }

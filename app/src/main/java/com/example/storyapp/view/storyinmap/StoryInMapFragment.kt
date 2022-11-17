@@ -24,7 +24,7 @@ class StoryInMapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private val boundsBuilder = LatLngBounds.builder()
     private val viewModel: StoryViewModel by viewModels {
-        ViewModelFactory()
+        ViewModelFactory(requireContext())
     }
 
     override fun onCreateView(
@@ -42,11 +42,7 @@ class StoryInMapFragment : Fragment(), OnMapReadyCallback {
         mapView.onResume()
         mapView.getMapAsync(this)
 
-        val sharedPref = view.context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
-        val token = sharedPref.getString("token", "123") ?: ""
-
-//        viewModel.getStoryWithLocation(token)
-        viewModel.getStoryWithLocation(token).observe(viewLifecycleOwner) {
+        viewModel.getStoryWithLocation().observe(viewLifecycleOwner) {
             addManyMarker(it)
         }
     }

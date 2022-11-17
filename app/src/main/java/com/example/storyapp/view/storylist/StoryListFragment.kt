@@ -1,6 +1,5 @@
 package com.example.storyapp.view.storylist
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -25,7 +24,7 @@ import com.example.storyapp.viewmodel.ViewModelFactory
 class StoryListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private val viewModel: StoryViewModel by viewModels {
-        ViewModelFactory()
+        ViewModelFactory(requireContext())
     }
 
     override fun onCreateView(
@@ -41,13 +40,9 @@ class StoryListFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerview_story_list)
         recyclerView.setHasFixedSize(true)
 
-        val sharedPref = view.context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
-        val token = sharedPref.getString("token", "123") ?: ""
-
-        viewModel.getStory(token).observe(viewLifecycleOwner) {
+        viewModel.getStory().observe(viewLifecycleOwner) {
             showRecyclerList(it)
         }
-        Log.d("StoryListFragment", "token: $token")
     }
 
     private fun showRecyclerList(list: PagingData<StoryModel>) {

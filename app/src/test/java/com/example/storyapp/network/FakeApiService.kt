@@ -32,7 +32,7 @@ class FakeApiService : ApiService {
     }
 
     override suspend fun getStories(token: String, page: Int, size: Int): Response<StoryResponse> {
-        return getStoriesDummy
+        TODO("Not yet implemented")
     }
 
     override fun getStoriesWithLocation(token: String): Call<StoryResponse> {

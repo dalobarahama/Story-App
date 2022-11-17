@@ -165,6 +165,7 @@ class AddStoryFragment : Fragment() {
             } else {
                 progressBar.visibility = View.GONE
                 Toast.makeText(context, "Upload Failed", Toast.LENGTH_SHORT).show()
+                Log.d("AddStoryFragment", "uploadStory: ${it?.message}")
             }
         }
     }

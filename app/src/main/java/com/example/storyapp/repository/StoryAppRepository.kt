@@ -1,5 +1,7 @@
 package com.example.storyapp.repository
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,9 +17,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class StoryAppRepository constructor(private val apiService: ApiService) {
+class StoryAppRepository constructor(context: Context, private val apiService: ApiService) {
+    private val sharedPref: SharedPreferences =
+        context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
+    val token = sharedPref.getString("token", "123") ?: ""
 
-    fun getStory(token: String): LiveData<PagingData<StoryModel>> {
+    fun getStory(): LiveData<PagingData<StoryModel>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 5,
@@ -28,7 +33,7 @@ class StoryAppRepository constructor(private val apiService: ApiService) {
         ).liveData
     }
 
-    fun getStoryWithLocation(token: String): LiveData<List<StoryModel>> {
+    fun getStoryWithLocation(): LiveData<List<StoryModel>> {
         val storiesWithLocationLiveData = MutableLiveData<List<StoryModel>>()
         apiService.getStoriesWithLocation(token).enqueue(
             object : Callback<StoryResponse> {

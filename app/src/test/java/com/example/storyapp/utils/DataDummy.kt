@@ -3,7 +3,6 @@ package com.example.storyapp.utils
 import androidx.paging.PagingData
 import com.example.storyapp.data.model.StoryModel
 import com.example.storyapp.data.model.response.StoryResponse
-import retrofit2.Response
 
 object DataDummy {
     fun getDataDummyWithLocation(): List<StoryModel> {
@@ -23,7 +22,7 @@ object DataDummy {
         return storyList
     }
 
-    fun getStoriesDummy(): Response<StoryResponse> {
+    fun getStoriesDummy(): StoryResponse {
         val storyList = ArrayList<StoryModel>()
         for (i in 1..10) {
             val story = StoryModel(
@@ -37,9 +36,9 @@ object DataDummy {
             )
             storyList.add(story)
         }
-        return Response.success(StoryResponse(true, "Dummy data", storyList))
+        return StoryResponse(true, "Dummy data", storyList)
     }
 
     fun generatePagingDataDummy(): PagingData<StoryModel> =
-        PagingData.from(getStoriesDummy().body()!!.listStory)
+        PagingData.from(getStoriesDummy().listStory)
 }
