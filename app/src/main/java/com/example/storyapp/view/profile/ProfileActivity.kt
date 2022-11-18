@@ -7,7 +7,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.storyapp.R
-import com.example.storyapp.view.auth.LoginActivity
+import com.example.storyapp.view.login.LoginActivity
 
 class ProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

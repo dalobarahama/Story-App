@@ -46,15 +46,15 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.auth.RegisterActivity"
+            android:name=".view.login.RegisterActivity"
             android:exported="false"
-            android:parentActivityName=".view.auth.LoginActivity">
+            android:parentActivityName=".view.login.LoginActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.auth.LoginActivity"
+            android:name=".view.login.LoginActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

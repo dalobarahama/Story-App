@@ -1,4 +1,4 @@
-package com.example.storyapp.view.auth
+package com.example.storyapp.view.login
 
 import android.content.Intent
 import android.os.Bundle
