@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import com.example.storyapp.R
 import com.example.storyapp.view.profile.ProfileActivity
 
-class MainActivity : AppCompatActivity(), MainViewMvcImpl.Listener {
+class MainActivity : AppCompatActivity(), MainViewMvc.Listener {
 
     private lateinit var viewMvc: MainViewMvc
 

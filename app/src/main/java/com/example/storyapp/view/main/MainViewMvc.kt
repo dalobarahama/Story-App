@@ -1,13 +1,14 @@
 package com.example.storyapp.view.main
 
-import android.view.View
-import com.example.storyapp.view.main.MainViewMvcImpl.Listener
+import androidx.fragment.app.Fragment
+import com.example.storyapp.view.common.BaseViewMvc
 
-interface MainViewMvc {
-    fun getRootView(): View
-    fun <T : View?> findViewById(id: Int): T
-    fun registerListener(listener: Listener)
-    fun unregisterListener(listener: Listener)
+interface MainViewMvc : BaseViewMvc<MainViewMvc.Listener> {
+    interface Listener {
+        fun loadFragment(fragment: Fragment, container: Int)
+        fun onPositiveDialogPressed()
+    }
+
     fun showAlertDialog()
     fun setDefaultFragment()
 }
