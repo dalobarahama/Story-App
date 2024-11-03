@@ -2,21 +2,17 @@ package com.example.storyapp.view.register
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
-import com.example.storyapp.customview.MyEditText
 import com.example.storyapp.network.RestApiService
 import com.example.storyapp.view.login.LoginActivity
 
-class RegisterActivity : AppCompatActivity(), RegisterMvcImpl.Listener {
+class RegisterActivity : AppCompatActivity(), RegisterViewMvc.Listener {
 
-    private lateinit var viewMvc: RegisterMvc
+    private lateinit var viewMvc: RegisterViewMvc
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewMvc = RegisterMvcImpl(layoutInflater, null)
-
+        viewMvc = RegisterViewMvcImpl(layoutInflater, null)
         setContentView(viewMvc.getRootView())
     }
 

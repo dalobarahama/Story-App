@@ -8,16 +8,10 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.example.storyapp.R
+import com.example.storyapp.view.common.BaseViewMvcImpl
 
-class RegisterMvcImpl(layoutInflater: LayoutInflater, parent: ViewGroup?) : RegisterMvc {
-
-    interface Listener {
-        fun onRegisterButtonClicked(name: String, email: String, password: String)
-    }
-
-    private val listeners = HashSet<Listener>()
-
-    private val rootView = layoutInflater.inflate(R.layout.activity_register, parent, false)
+class RegisterViewMvcImpl(layoutInflater: LayoutInflater, parent: ViewGroup?) : RegisterViewMvc,
+    BaseViewMvcImpl<RegisterViewMvc.Listener>() {
 
     private var progressBar: ProgressBar
     private var registerButton: Button
@@ -27,6 +21,8 @@ class RegisterMvcImpl(layoutInflater: LayoutInflater, parent: ViewGroup?) : Regi
     private var confirmPassword: EditText
 
     init {
+        setRootView(layoutInflater.inflate(R.layout.activity_register, parent, false))
+
         progressBar = findViewById(R.id.progress_circular_register)
         registerButton = findViewById(R.id.btn_register)
         username = findViewById(R.id.et_register_name)
@@ -47,22 +43,6 @@ class RegisterMvcImpl(layoutInflater: LayoutInflater, parent: ViewGroup?) : Regi
         }
     }
 
-    override fun getRootView(): View {
-        return rootView
-    }
-
-    override fun <T : View?> findViewById(id: Int): T {
-        return getRootView().findViewById(id)
-    }
-
-    override fun registerListener(listener: Listener) {
-        listeners.add(listener)
-    }
-
-    override fun unregisterListener(listener: Listener) {
-        listeners.remove(listener)
-    }
-
     override fun showToast(message: String) {
         Toast.makeText(getRootView().context, message, Toast.LENGTH_SHORT).show()
     }
@@ -73,14 +53,6 @@ class RegisterMvcImpl(layoutInflater: LayoutInflater, parent: ViewGroup?) : Regi
 
     override fun hideProgressBar() {
         progressBar.visibility = View.GONE
-    }
-
-    private fun getListener(): Listener? {
-        var listener: Listener? = null
-        for (item in listeners) {
-            listener = item
-        }
-        return listener
     }
 
     private fun isPasswordSame(): Boolean {
