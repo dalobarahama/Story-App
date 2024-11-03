@@ -12,17 +12,10 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.example.storyapp.R
+import com.example.storyapp.view.common.BaseViewMvcImpl
 
-class LoginMvpImpl(layoutInflater: LayoutInflater, parent: ViewGroup?) : LoginMvc {
-
-    interface Listener {
-        fun onClickRegister()
-        fun onClickLogin(email: String, password: String)
-    }
-
-    private val listeners = HashSet<Listener>()
-
-    private val rootView = layoutInflater.inflate(R.layout.activity_login, parent, false)
+class LoginViewMvcImpl(layoutInflater: LayoutInflater, parent: ViewGroup?) : LoginViewMvc,
+    BaseViewMvcImpl<LoginViewMvc.Listener>() {
 
     private var progressBar: ProgressBar
     private var loginButton: Button
@@ -33,6 +26,8 @@ class LoginMvpImpl(layoutInflater: LayoutInflater, parent: ViewGroup?) : LoginMv
     private var tvLogin: TextView
 
     init {
+        setRootView(layoutInflater.inflate(R.layout.activity_login, parent, false))
+
         progressBar = findViewById(R.id.progress_circular_login)
         loginButton = findViewById(R.id.btn_login)
         register = findViewById(R.id.tv_register)
@@ -52,22 +47,6 @@ class LoginMvpImpl(layoutInflater: LayoutInflater, parent: ViewGroup?) : LoginMv
         playAnimation()
     }
 
-    override fun getRootView(): View {
-        return rootView
-    }
-
-    override fun <T : View?> findViewById(id: Int): T {
-        return getRootView().findViewById(id)
-    }
-
-    override fun registerListener(listener: Listener) {
-        listeners.add(listener)
-    }
-
-    override fun unregisterListener(listener: Listener) {
-        listeners.remove(listener)
-    }
-
     override fun showToast(message: String) {
         Toast.makeText(getRootView().context, message, Toast.LENGTH_SHORT).show()
     }
@@ -78,14 +57,6 @@ class LoginMvpImpl(layoutInflater: LayoutInflater, parent: ViewGroup?) : LoginMv
 
     override fun hideProgressBar() {
         progressBar.visibility = View.GONE
-    }
-
-    private fun getListener(): Listener? {
-        var listener: Listener? = null
-        for (item in listeners) {
-            listener = item
-        }
-        return listener
     }
 
     private fun playAnimation() {

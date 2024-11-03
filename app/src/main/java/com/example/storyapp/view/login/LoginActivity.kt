@@ -8,14 +8,13 @@ import com.example.storyapp.network.RestApiService
 import com.example.storyapp.view.main.MainActivity
 import com.example.storyapp.view.register.RegisterActivity
 
-class LoginActivity : AppCompatActivity(), LoginMvpImpl.Listener {
-    private lateinit var viewMvc: LoginMvc
+class LoginActivity : AppCompatActivity(), LoginViewMvc.Listener {
+    private lateinit var viewMvc: LoginViewMvc
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewMvc = LoginMvpImpl(layoutInflater, null)
-
+        viewMvc = LoginViewMvcImpl(layoutInflater, null)
         setContentView(viewMvc.getRootView())
     }
 
