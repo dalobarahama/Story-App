@@ -30,7 +30,7 @@
         <activity
             android:name=".view.profile.ProfileActivity"
             android:exported="false"
-            android:parentActivityName=".view.MainActivity">
+            android:parentActivityName=".view.main.MainActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -65,7 +65,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.MainActivity"
+            android:name=".view.main.MainActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -74,7 +74,7 @@
         <activity
             android:name=".view.detailstory.DetailStoryActivity"
             android:exported="false"
-            android:parentActivityName=".view.MainActivity">
+            android:parentActivityName=".view.main.MainActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
