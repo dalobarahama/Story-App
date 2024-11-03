@@ -1,4 +1,4 @@
-package com.example.storyapp.view.login
+package com.example.storyapp.view.register
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.storyapp.R
 import com.example.storyapp.customview.MyEditText
 import com.example.storyapp.network.RestApiService
+import com.example.storyapp.view.login.LoginActivity
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar

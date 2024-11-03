@@ -46,7 +46,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.login.RegisterActivity"
+            android:name=".view.register.RegisterActivity"
             android:exported="false"
             android:parentActivityName=".view.login.LoginActivity">
             <meta-data
