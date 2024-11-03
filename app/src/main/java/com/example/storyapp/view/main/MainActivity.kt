@@ -9,6 +9,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.storyapp.R
+import com.example.storyapp.view.common.ViewMvcFactory
 import com.example.storyapp.view.profile.ProfileActivity
 
 class MainActivity : AppCompatActivity(), MainViewMvc.Listener {
@@ -17,7 +18,8 @@ class MainActivity : AppCompatActivity(), MainViewMvc.Listener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewMvc = MainViewMvcImpl(layoutInflater, null)
+        val viewMvcFactory = ViewMvcFactory(layoutInflater)
+        viewMvc = viewMvcFactory.getMainViewMvc(null)
         setContentView(viewMvc.getRootView())
 
         handleOnBackPressed()

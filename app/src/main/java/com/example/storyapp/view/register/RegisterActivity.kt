@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.storyapp.network.RestApiService
+import com.example.storyapp.view.common.ViewMvcFactory
 import com.example.storyapp.view.login.LoginActivity
 
 class RegisterActivity : AppCompatActivity(), RegisterViewMvc.Listener {
@@ -12,7 +13,8 @@ class RegisterActivity : AppCompatActivity(), RegisterViewMvc.Listener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewMvc = RegisterViewMvcImpl(layoutInflater, null)
+        val viewMvcFactory = ViewMvcFactory(layoutInflater)
+        viewMvc = viewMvcFactory.getRegisterViewMvc(null)
         setContentView(viewMvc.getRootView())
     }
 
