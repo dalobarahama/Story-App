@@ -3,6 +3,7 @@ package com.example.storyapp.view.main
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.FragmentTransaction
 import com.example.storyapp.R
 import com.example.storyapp.view.addstory.AddStoryFragment
 import com.example.storyapp.view.common.BaseViewMvcImpl
@@ -38,7 +39,10 @@ class MainViewMvcImpl(
                     return@setOnItemSelectedListener true
                 }
 
-                else -> return@setOnItemSelectedListener false
+                else -> {
+                    getListener()?.loadFragment(StoryListFragment(), container)
+                    return@setOnItemSelectedListener true
+                }
             }
         }
     }
@@ -55,7 +59,8 @@ class MainViewMvcImpl(
             .create().show()
     }
 
-    override fun setDefaultFragment() {
-        getListener()?.loadFragment(StoryListFragment(), container)
+    override fun setDefaultFragment(transaction: FragmentTransaction) {
+        transaction.replace(container, StoryListFragment())
+        transaction.commit()
     }
 }

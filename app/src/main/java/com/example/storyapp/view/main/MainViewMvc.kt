@@ -1,6 +1,7 @@
 package com.example.storyapp.view.main
 
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.example.storyapp.view.common.BaseViewMvc
 
 interface MainViewMvc : BaseViewMvc<MainViewMvc.Listener> {
@@ -10,5 +11,5 @@ interface MainViewMvc : BaseViewMvc<MainViewMvc.Listener> {
     }
 
     fun showAlertDialog()
-    fun setDefaultFragment()
+    fun setDefaultFragment(transaction: FragmentTransaction)
 }

@@ -20,15 +20,19 @@ class MainActivity : AppCompatActivity(), MainViewMvc.Listener {
         super.onCreate(savedInstanceState)
         val viewMvcFactory = ViewMvcFactory(layoutInflater)
         viewMvc = viewMvcFactory.getMainViewMvc(null)
-        setContentView(viewMvc.getRootView())
+
+        if (savedInstanceState == null) {
+            val transaction = supportFragmentManager.beginTransaction()
+            viewMvc.setDefaultFragment(transaction)
+        }
 
         handleOnBackPressed()
+        setContentView(viewMvc.getRootView())
     }
 
     override fun onStart() {
         super.onStart()
         viewMvc.registerListener(this)
-        viewMvc.setDefaultFragment()
     }
 
     override fun onStop() {
@@ -56,6 +60,7 @@ class MainActivity : AppCompatActivity(), MainViewMvc.Listener {
         finish()
     }
 
+    // TODO need to handle onBackPressed on SDK under Tiramisu
     private fun handleOnBackPressed() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -64,7 +69,7 @@ class MainActivity : AppCompatActivity(), MainViewMvc.Listener {
                 }
             })
         } else {
-            onBackPressedDispatcher.onBackPressed()
+//            onBackPressedDispatcher.onBackPressed()
         }
     }
 }
