@@ -17,12 +17,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import com.example.storyapp.R
 import com.example.storyapp.network.RestApiService
 import com.example.storyapp.view.storylist.StoryListFragment
@@ -39,124 +37,101 @@ import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.OutputStream
 
-class AddStoryFragment : Fragment() {
-    private lateinit var imageView: ImageView
-    private lateinit var imageUri: Uri
-    private lateinit var progressBar: ProgressBar
-    private lateinit var uri: Uri
+class AddStoryFragment : Fragment(), AddStoryViewMvc.Listener {
+
+    private lateinit var viewMvc: AddStoryViewMvc
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var lastKnownLocation: Location? = null
 
+    private lateinit var uri: Uri
+    private lateinit var token: String
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.fragment_add_story, container, false)
+    ): View {
+        viewMvc = AddStoryViewMvcImpl(layoutInflater, container)
+        return viewMvc.getRootView()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        progressBar = view.findViewById(R.id.progress_circular_add_story)
-        imageView = view.findViewById(R.id.add_story_image)
-        val uploadButton = view.findViewById<Button>(R.id.btn_add_story_upload)
-        val openCameraButton = view.findViewById<Button>(R.id.btn_add_story_image_camera)
-        val openGalleryButton = view.findViewById<Button>(R.id.btn_add_story_image_gallery)
-        val description = view.findViewById<EditText>(R.id.et_add_story_description)
-
         val sharedPref = view.context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
-        val token = sharedPref.getString("token", "123") ?: ""
+        token = sharedPref.getString("token", "123") ?: ""
 
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+    }
 
-        openCameraButton.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.CAMERA
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                openCamera()
-            } else {
-                requestPermissionLauncher.launch(arrayOf(Manifest.permission.CAMERA))
-            }
+    override fun onStart() {
+        super.onStart()
+        viewMvc.registerListener(this)
+    }
+
+    override fun onStop() {
+        viewMvc.unregisterListener(this)
+        super.onStop()
+    }
+
+    override fun openCamera() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val values = ContentValues()
+            values.put(MediaStore.Images.Media.DISPLAY_NAME,"images_${System.currentTimeMillis()}.jpg")
+            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+
+            uri = context?.contentResolver?.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                values
+            ) ?: Uri.EMPTY
+
+            cameraResultLauncher.launch(uri)
+        } else {
+            requestPermissionLauncher.launch(arrayOf(Manifest.permission.CAMERA))
         }
+    }
 
-        openGalleryButton.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                openGallery()
+    override fun uploadStory(description: String, imageUri: Uri) {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            if (viewMvc.isImageAndDescriptionIsNull()) {
+                viewMvc.showToast("Image or description cannot be empty")
             } else {
-                requestPermissionLauncher.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
-            }
-        }
+                viewMvc.showProgressBar()
 
-        uploadButton.setOnClickListener {
-            if (imageView.drawable == null || description.text.isEmpty()) {
-                Toast.makeText(context, "Image or description cannot be empty", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
                 getDeviceLocation()
 
-                progressBar.visibility = View.VISIBLE
+                val (descRequestBody, imageRequestBody) = bodyPartDescAndImage(imageUri, description)
 
-                val path: File =
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                val file = File.createTempFile("image", ".jpg", path)
+                val apiService = RestApiService()
+                apiService.uploadStory(token, descRequestBody, imageRequestBody, lastKnownLocation?.latitude, lastKnownLocation?.longitude) {
+                    if (it?.error == false) {
+                        viewMvc.hideProgressBar()
+                        viewMvc.showToast("Story Uploaded")
 
-                val contentResolver: ContentResolver = requireContext().contentResolver
-
-                val inputStream = contentResolver.openInputStream(imageUri) as InputStream
-                val outputStream: OutputStream = FileOutputStream(file)
-                val buf = ByteArray(1024)
-                var len: Int
-                while (inputStream.read(buf).also { len = it } > 0) outputStream.write(buf, 0, len)
-                outputStream.close()
-                inputStream.close()
-
-                val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                val descRequestBody = description.text.toString()
-                    .toRequestBody("text/plain".toMediaType())
-
-                val imageRequestBody =
-                    MultipartBody.Part.createFormData("photo", file.name, requestFile)
-
-                uploadStory(
-                    token,
-                    descRequestBody,
-                    imageRequestBody,
-                    lastKnownLocation?.latitude,
-                    lastKnownLocation?.longitude
-                )
-
-                Log.d("AddStoryFragment", "requestBody: $requestFile")
-                Log.d(
-                    "AddStoryFragment",
-                    "requestBody: lat ${lastKnownLocation?.latitude}, lon ${lastKnownLocation?.longitude}"
-                )
-                Log.d("AddStoryFragment", "file: $file")
+                        requireActivity().supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, StoryListFragment())
+                            .commit()
+                    } else {
+                        viewMvc.hideProgressBar()
+                        viewMvc.showToast("Upload Failed")
+                    }
+                }
             }
-        }
-
-    }
-
-    private fun openCamera() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { intent ->
-            val values = ContentValues()
-            values.put(MediaStore.Images.Media.TITLE, "images")
-
-            uri = context?.contentResolver
-                ?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)!!
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-            cameraResultLauncher.launch(intent)
+        } else {
+            requestPermissionLauncher.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
         }
     }
 
-    private fun openGallery() {
+    override fun openGallery() {
         Intent(Intent.ACTION_GET_CONTENT).also { intent ->
             intent.type = "image/*"
             galleryResultLauncher.launch(intent)
@@ -164,14 +139,9 @@ class AddStoryFragment : Fragment() {
     }
 
     private var cameraResultLauncher =
-        registerForActivityResult(StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                context?.let {
-                    Glide.with(it)
-                        .load(uri)
-                        .into(imageView)
-                }
-                imageUri = uri
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success) {
+                viewMvc.loadImage(uri)
             }
         }
 
@@ -180,11 +150,8 @@ class AddStoryFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 val intent: Intent? = result.data
                 context?.let {
-                    Glide.with(it)
-                        .load(intent?.data)
-                        .into(imageView)
+                    intent?.data?.let { viewMvc.loadImage(it) }
                 }
-                imageUri = intent?.data!!
             }
         }
 
@@ -198,18 +165,42 @@ class AddStoryFragment : Fragment() {
         val apiService = RestApiService()
         apiService.uploadStory(token, description, imageUri, lat, lon) {
             if (it?.error == false) {
-                progressBar.visibility = View.GONE
-                Toast.makeText(context, "Story Uploaded", Toast.LENGTH_SHORT).show()
+                viewMvc.hideProgressBar()
+                viewMvc.showToast("Story Uploaded")
 
                 requireActivity().supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, StoryListFragment())
                     .commit()
             } else {
-                progressBar.visibility = View.GONE
-                Toast.makeText(context, "Upload Failed", Toast.LENGTH_SHORT).show()
-                Log.d("AddStoryFragment", "uploadStory: ${it?.message}")
+                viewMvc.hideProgressBar()
+                viewMvc.showToast("Upload Failed")
             }
         }
+    }
+
+    private fun bodyPartDescAndImage(
+        imageUri: Uri,
+        description: String
+    ): Pair<RequestBody, MultipartBody.Part> {
+        val path: File =Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val file = File.createTempFile("image", ".jpg", path)
+
+        val contentResolver: ContentResolver = requireContext().contentResolver
+
+        val inputStream = contentResolver.openInputStream(imageUri) as InputStream
+        val outputStream: OutputStream = FileOutputStream(file)
+        val buf = ByteArray(1024)
+        var len: Int
+        while (inputStream.read(buf).also { len = it } > 0) outputStream.write(buf, 0, len)
+        outputStream.close()
+        inputStream.close()
+
+        val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+        val descRequestBody = description.toRequestBody("text/plain".toMediaType())
+
+        val imageRequestBody = MultipartBody.Part.createFormData("photo", file.name, requestFile)
+
+        return Pair(descRequestBody, imageRequestBody)
     }
 
     private var requestPermissionLauncher =
@@ -218,9 +209,11 @@ class AddStoryFragment : Fragment() {
                 permission[Manifest.permission.CAMERA] ?: false -> {
                     openCamera()
                 }
+
                 permission[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false -> {
                     openGallery()
                 }
+
                 permission[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {}
                 permission[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {}
             }
