@@ -120,6 +120,7 @@ class AddStoryFragment : Fragment(), AddStoryViewMvc.Listener {
                         requireActivity().supportFragmentManager.beginTransaction()
                             .replace(R.id.fragment_container, StoryListFragment())
                             .commit()
+                        viewMvc.selectStoryListFragment(requireActivity())
                     } else {
                         viewMvc.hideProgressBar()
                         viewMvc.showToast("Upload Failed")
@@ -154,29 +155,6 @@ class AddStoryFragment : Fragment(), AddStoryViewMvc.Listener {
                 }
             }
         }
-
-    private fun uploadStory(
-        token: String,
-        description: RequestBody,
-        imageUri: MultipartBody.Part,
-        lat: Double?,
-        lon: Double?,
-    ) {
-        val apiService = RestApiService()
-        apiService.uploadStory(token, description, imageUri, lat, lon) {
-            if (it?.error == false) {
-                viewMvc.hideProgressBar()
-                viewMvc.showToast("Story Uploaded")
-
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, StoryListFragment())
-                    .commit()
-            } else {
-                viewMvc.hideProgressBar()
-                viewMvc.showToast("Upload Failed")
-            }
-        }
-    }
 
     private fun bodyPartDescAndImage(
         imageUri: Uri,

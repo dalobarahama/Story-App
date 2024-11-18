@@ -9,19 +9,21 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.example.storyapp.R
 import com.example.storyapp.view.common.BaseViewMvcImpl
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class AddStoryViewMvcImpl(
     layoutInflater: LayoutInflater,
     parent: ViewGroup?
 ) : AddStoryViewMvc, BaseViewMvcImpl<AddStoryViewMvc.Listener>() {
 
-    private lateinit var imageView: ImageView
     private lateinit var imageUri: Uri
-    private lateinit var progressBar: ProgressBar
-    private lateinit var description: EditText
+    private var imageView: ImageView
+    private var progressBar: ProgressBar
+    private var description: EditText
 
     init {
         setRootView(layoutInflater.inflate(R.layout.fragment_add_story, parent, false))
@@ -70,5 +72,11 @@ class AddStoryViewMvcImpl(
             .into(imageView)
 
         imageUri = uri
+    }
+
+    //ToDo: need to make standalone class for bnv
+    override fun selectStoryListFragment(requireActivity: FragmentActivity) {
+        val bnv = requireActivity.findViewById<BottomNavigationView>(R.id.bnv)
+        bnv.selectedItemId = R.id.home_menu
     }
 }

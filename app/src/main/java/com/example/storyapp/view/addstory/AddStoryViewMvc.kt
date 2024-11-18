@@ -1,6 +1,7 @@
 package com.example.storyapp.view.addstory
 
 import android.net.Uri
+import androidx.fragment.app.FragmentActivity
 import com.example.storyapp.view.common.BaseViewMvc
 
 interface AddStoryViewMvc: BaseViewMvc<AddStoryViewMvc.Listener> {
@@ -15,4 +16,5 @@ interface AddStoryViewMvc: BaseViewMvc<AddStoryViewMvc.Listener> {
     fun showToast(message: String)
     fun isImageAndDescriptionIsNull(): Boolean
     fun loadImage(uri: Uri)
+    fun selectStoryListFragment(requireActivity: FragmentActivity)
 }
