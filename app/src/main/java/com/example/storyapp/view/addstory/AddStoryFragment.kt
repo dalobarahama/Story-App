@@ -112,8 +112,8 @@ class AddStoryFragment : Fragment(), AddStoryViewMvc.Listener {
                 val (descRequestBody, imageRequestBody) = bodyPartDescAndImage(imageUri, description)
 
                 val apiService = RestApiService()
-                apiService.uploadStory(token, descRequestBody, imageRequestBody, lastKnownLocation?.latitude, lastKnownLocation?.longitude) {
-                    if (it?.error == false) {
+                apiService.uploadStory(token, descRequestBody, imageRequestBody, lastKnownLocation?.latitude, lastKnownLocation?.longitude) { response ->
+                    if (response?.body()?.error == false) {
                         viewMvc.hideProgressBar()
                         viewMvc.showToast("Story Uploaded")
 
@@ -123,7 +123,7 @@ class AddStoryFragment : Fragment(), AddStoryViewMvc.Listener {
                         viewMvc.selectStoryListFragment(requireActivity())
                     } else {
                         viewMvc.hideProgressBar()
-                        viewMvc.showToast("Upload Failed")
+                        viewMvc.showToast(response?.message().toString())
                     }
                 }
             }

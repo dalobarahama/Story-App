@@ -60,7 +60,7 @@ class RestApiService {
         image: MultipartBody.Part,
         lat: Double?,
         lon: Double?,
-        onResult: (CommonResponse?) -> Unit,
+        onResult: (Response<CommonResponse>?) -> Unit,
     ) {
         retrofit.uploadStory(token, description, image, lat, lon)
             .enqueue(object : Callback<CommonResponse> {
@@ -71,7 +71,7 @@ class RestApiService {
                     Log.d("RestApiService", "onResponse: called")
                     Log.d("RestApiService", "onResponse: $response")
                     Log.d("RestApiService", "onResponse: ${response.body()}")
-                    onResult(response.body())
+                    onResult(response)
                 }
 
                 override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
