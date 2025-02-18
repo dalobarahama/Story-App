@@ -62,14 +62,10 @@ class MainActivity : AppCompatActivity(), MainViewMvc.Listener {
 
     // TODO need to handle onBackPressed on SDK under Tiramisu
     private fun handleOnBackPressed() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    viewMvc.showAlertDialog()
-                }
-            })
-        } else {
-//            onBackPressedDispatcher.onBackPressed()
-        }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                viewMvc.showAlertDialog()
+            }
+        })
     }
 }
