@@ -6,6 +6,8 @@ import com.example.storyapp.view.login.LoginViewMvc
 import com.example.storyapp.view.login.LoginViewMvcImpl
 import com.example.storyapp.view.main.MainViewMvc
 import com.example.storyapp.view.main.MainViewMvcImpl
+import com.example.storyapp.view.profile.ProfileViewMvc
+import com.example.storyapp.view.profile.ProfileViewMvcImpl
 import com.example.storyapp.view.register.RegisterViewMvc
 import com.example.storyapp.view.register.RegisterViewMvcImpl
 
@@ -21,5 +23,9 @@ class ViewMvcFactory(private val layoutInflater: LayoutInflater) {
 
     fun getMainViewMvc(parent: ViewGroup?): MainViewMvc {
         return MainViewMvcImpl(layoutInflater, parent)
+    }
+
+    fun getProfileViewMvc(parent: ViewGroup?): ProfileViewMvc {
+        return ProfileViewMvcImpl(layoutInflater, parent)
     }
 }
