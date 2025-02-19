@@ -2,30 +2,23 @@ package com.example.storyapp.view.detailstory
 
 import android.content.Context
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
-import com.example.storyapp.R
 import com.example.storyapp.network.RestApiService
+import com.example.storyapp.view.common.ViewMvcFactory
 
-class DetailStoryActivity : AppCompatActivity() {
-    private lateinit var image: ImageView
-    private lateinit var description: TextView
-    private lateinit var username: TextView
+class DetailStoryActivity : AppCompatActivity(), DetailStoryMvc.Listener {
 
     companion object {
         const val STORY_ID = "story_id"
     }
 
+    private lateinit var viewMvc: DetailStoryMvc
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail_story)
-
-        username = findViewById(R.id.tv_detail_story_username)
-        description = findViewById(R.id.tv_detail_story_description)
-        image = findViewById(R.id.detail_story_image)
+        val viewMvcFactory = ViewMvcFactory(layoutInflater)
+        viewMvc = viewMvcFactory.getDetailStoryViewMvc(null)
+        setContentView(viewMvc.getRootView())
 
         val storyId = intent.getStringExtra(STORY_ID)
         val sharedPref = getSharedPreferences("prefs", Context.MODE_PRIVATE)
@@ -38,13 +31,9 @@ class DetailStoryActivity : AppCompatActivity() {
         val apiService = RestApiService()
         apiService.getDetailStory(token, storyId) {
             if (it?.error == false) {
-                username.text = it.story.name
-                description.text = it.story.description
-                Glide.with(this)
-                    .load(it.story.photoUrl)
-                    .into(image)
+                viewMvc.bindView(it.story)
             } else {
-                Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
+                viewMvc.showToastError()
             }
         }
     }

@@ -2,6 +2,8 @@ package com.example.storyapp.view.common
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.example.storyapp.view.detailstory.DetailStoryMvc
+import com.example.storyapp.view.detailstory.DetailStoryMvcImpl
 import com.example.storyapp.view.login.LoginViewMvc
 import com.example.storyapp.view.login.LoginViewMvcImpl
 import com.example.storyapp.view.main.MainViewMvc
@@ -27,5 +29,9 @@ class ViewMvcFactory(private val layoutInflater: LayoutInflater) {
 
     fun getProfileViewMvc(parent: ViewGroup?): ProfileViewMvc {
         return ProfileViewMvcImpl(layoutInflater, parent)
+    }
+
+    fun getDetailStoryViewMvc(parent: ViewGroup?): DetailStoryMvc {
+        return DetailStoryMvcImpl(layoutInflater, parent)
     }
 }
